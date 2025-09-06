@@ -106,6 +106,13 @@ function LessonContent({ courseId, moduleId }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('text');
   const [attention, setAttention] = useState(72);
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizScore, setQuizScore] = useState(null);
+  const [showQuizResults, setShowQuizResults] = useState(false);
+  const [moduleCompleted, setModuleCompleted] = useState(false);
+  const [showAttentionPopup, setShowAttentionPopup] = useState(false);
+  const [attentionSuggestions, setAttentionSuggestions] = useState([]);
   const courseData = t(`lessonsContent.${courseId}`);
   const moduleData = courseData.modules[moduleId];
   const quizData = moduleData?.quiz || courseData.modules?.quiz;
@@ -123,6 +130,17 @@ function LessonContent({ courseId, moduleId }) {
     { id: 'video', label: t('lessons.tabs.video'), icon: '🎥' }
   ];
 
+  // Reset quiz state when module changes
+  useEffect(() => {
+    setQuizAnswers({});
+    setQuizSubmitted(false);
+    setQuizScore(null);
+    setShowQuizResults(false);
+    setModuleCompleted(false);
+    setShowAttentionPopup(false);
+    setAttentionSuggestions([]);
+  }, [moduleId]);
+
   // Persist progress when user views a tab
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('nv_progress') || '{}');
@@ -134,6 +152,52 @@ function LessonContent({ courseId, moduleId }) {
     localStorage.setItem('nv_progress', JSON.stringify(saved));
   }, [courseId, moduleId, activeTab]);
 
+  // Generate attention-based suggestions
+  const generateAttentionSuggestions = (attentionLevel) => {
+    const suggestions = [];
+    
+    if (attentionLevel < 40) {
+      suggestions.push({
+        type: 'text',
+        icon: '📖',
+        title: 'Switch to Text Mode',
+        description: 'Reading text content can help refocus your attention',
+        action: () => setActiveTab('text')
+      });
+      suggestions.push({
+        type: 'quiz',
+        icon: '📝',
+        title: 'Try Interactive Quiz',
+        description: 'Engage with questions to boost concentration',
+        action: () => setActiveTab('quiz')
+      });
+      suggestions.push({
+        type: 'video',
+        icon: '🎥',
+        title: 'Watch Video Content',
+        description: 'Visual content might help regain focus',
+        action: () => setActiveTab('video')
+      });
+    } else if (attentionLevel < 60) {
+      suggestions.push({
+        type: 'quiz',
+        icon: '📝',
+        title: 'Take a Quick Quiz',
+        description: 'Interactive content can help maintain focus',
+        action: () => setActiveTab('quiz')
+      });
+      suggestions.push({
+        type: 'break',
+        icon: '⏸️',
+        title: 'Take a Short Break',
+        description: 'A brief pause might help refresh your mind',
+        action: () => alert('Consider taking a 2-3 minute break to refresh your focus!')
+      });
+    }
+    
+    return suggestions;
+  };
+
   // Simulate attention updates (placeholder for EEG integration)
   useEffect(() => {
     const id = setInterval(() => {
@@ -141,6 +205,16 @@ function LessonContent({ courseId, moduleId }) {
         const delta = Math.random() * 10 - 5;
         const next = Math.max(10, Math.min(100, prev + delta));
         const val = Math.round(next);
+        
+        // Check for low attention and show suggestions
+        if (val < 60 && !showAttentionPopup) {
+          const suggestions = generateAttentionSuggestions(val);
+          if (suggestions.length > 0) {
+            setAttentionSuggestions(suggestions);
+            setShowAttentionPopup(true);
+          }
+        }
+        
         // persist sample for details view
         try {
           const store = JSON.parse(localStorage.getItem('nv_attention') || '{}');
@@ -157,7 +231,52 @@ function LessonContent({ courseId, moduleId }) {
       });
     }, 3000);
     return () => clearInterval(id);
-  }, []);
+  }, [showAttentionPopup]);
+
+  // Quiz handling functions
+  const handleQuizAnswerChange = (questionIndex, answerIndex) => {
+    setQuizAnswers(prev => ({
+      ...prev,
+      [questionIndex]: answerIndex
+    }));
+  };
+
+  const handleQuizSubmit = () => {
+    if (!quizData?.questions) return;
+    
+    let correctAnswers = 0;
+    const totalQuestions = quizData.questions.length;
+    
+    quizData.questions.forEach((question, qIndex) => {
+      const userAnswer = quizAnswers[qIndex];
+      const correctAnswer = question.correct; // Assuming correct answer index is stored in question.correct
+      
+      if (userAnswer === correctAnswer) {
+        correctAnswers++;
+      }
+    });
+    
+    const score = Math.round((correctAnswers / totalQuestions) * 100);
+    setQuizScore(score);
+    setQuizSubmitted(true);
+    setShowQuizResults(true);
+    
+    // Mark quiz as completed in progress
+    const saved = JSON.parse(localStorage.getItem('nv_progress') || '{}');
+    const course = saved[courseId] || { completedModules: {} };
+    const mod = course.completedModules[moduleId] || {};
+    mod.quiz = true;
+    course.completedModules[moduleId] = mod;
+    saved[courseId] = course;
+    localStorage.setItem('nv_progress', JSON.stringify(saved));
+  };
+
+  const resetQuiz = () => {
+    setQuizAnswers({});
+    setQuizSubmitted(false);
+    setQuizScore(null);
+    setShowQuizResults(false);
+  };
 
   // Determine course completion based on module completion
   const isCourseComplete = () => {
@@ -188,6 +307,99 @@ function LessonContent({ courseId, moduleId }) {
           </div>
         );
       case 'quiz':
+        if (!quizData?.questions) {
+          return (
+            <div className="max-w-4xl mx-auto text-center py-12">
+              <div className="text-gray-500 text-lg">Bu modül için quiz bulunmuyor.</div>
+            </div>
+          );
+        }
+
+        if (showQuizResults) {
+          return (
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-8">
+                <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 ${
+                  quizScore >= 80 ? 'bg-gradient-to-r from-green-500 to-green-600' :
+                  quizScore >= 60 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                  'bg-gradient-to-r from-red-500 to-red-600'
+                }`}>
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">Quiz Tamamlandı!</h2>
+                <div className={`text-4xl font-bold mb-2 ${
+                  quizScore >= 80 ? 'text-green-600' :
+                  quizScore >= 60 ? 'text-yellow-600' :
+                  'text-red-600'
+                }`}>
+                  {quizScore}%
+                </div>
+                <p className="text-gray-600 text-lg mb-8">
+                  {quizScore >= 80 ? 'Harika! Çok iyi performans gösterdiniz.' :
+                   quizScore >= 60 ? 'İyi iş! Biraz daha çalışarak daha iyi olabilirsiniz.' :
+                   'Tekrar deneyin. Başarısızlık değil, öğrenme fırsatı!'}
+                </p>
+              </div>
+
+              {/* Detailed Results */}
+              <div className="space-y-4 mb-8">
+                {quizData.questions.map((question, qIndex) => {
+                  const userAnswer = quizAnswers[qIndex];
+                  const correctAnswer = question.correct;
+                  const isCorrect = userAnswer === correctAnswer;
+                  
+                  return (
+                    <div key={qIndex} className={`border rounded-xl p-4 ${
+                      isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                    }`}>
+                      <div className="flex items-start space-x-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                          isCorrect ? 'bg-green-500' : 'bg-red-500'
+                        }`}>
+                          {isCorrect ? '✓' : '✗'}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 mb-2">{question.q}</h4>
+                          <div className="space-y-2">
+                            {question.a.map((answer, aIndex) => (
+                              <div key={aIndex} className={`p-3 rounded-lg ${
+                                aIndex === correctAnswer ? 'bg-green-100 text-green-800 font-medium' :
+                                aIndex === userAnswer && !isCorrect ? 'bg-red-100 text-red-800' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {answer}
+                                {aIndex === correctAnswer && <span className="ml-2 text-green-600">✓ Doğru cevap</span>}
+                                {aIndex === userAnswer && !isCorrect && <span className="ml-2 text-red-600">✗ Sizin cevabınız</span>}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="text-center space-x-4">
+                <button
+                  onClick={resetQuiz}
+                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Tekrar Dene
+                </button>
+                <button
+                  onClick={() => setShowQuizResults(false)}
+                  className="px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Quiz'e Dön
+                </button>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
@@ -209,33 +421,43 @@ function LessonContent({ courseId, moduleId }) {
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
                         {question.q}
-                  </h3>
-                  <div className="space-y-3">
-                    {question.a.map((answer, aIndex) => (
+                      </h3>
+                      <div className="space-y-3">
+                        {question.a.map((answer, aIndex) => (
                           <label key={aIndex} className="flex items-center cursor-pointer group/option">
-                        <input
-                          type="radio"
-                          name={`question-${qIndex}`}
-                          value={aIndex}
+                            <input
+                              type="radio"
+                              name={`question-${qIndex}`}
+                              value={aIndex}
+                              checked={quizAnswers[qIndex] === aIndex}
+                              onChange={() => handleQuizAnswerChange(qIndex, aIndex)}
                               className="mr-4 w-5 h-5 text-blue-600 focus:ring-blue-500 focus:ring-2"
-                        />
+                            />
                             <span className="text-gray-700 group-hover/option:text-blue-600 transition-colors duration-200 flex-1 p-4 rounded-xl hover:bg-white/70 group-hover/option:bg-white/90">
                               {answer}
                             </span>
-                      </label>
-                    ))}
+                          </label>
+                        ))}
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
               <div className="text-center mt-8">
-                <button className="px-10 py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                <button 
+                  onClick={handleQuizSubmit}
+                  disabled={Object.keys(quizAnswers).length !== quizData.questions.length}
+                  className={`px-10 py-4 font-bold text-lg rounded-xl transition-all duration-300 transform shadow-xl hover:shadow-2xl ${
+                    Object.keys(quizAnswers).length === quizData.questions.length
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white hover:scale-105'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
                   <span className="flex items-center">
                     <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Sınavı Tamamla
+                    {Object.keys(quizAnswers).length === quizData.questions.length ? 'Sınavı Tamamla' : 'Tüm Soruları Cevaplayın'}
                   </span>
                 </button>
               </div>
@@ -364,13 +586,92 @@ function LessonContent({ courseId, moduleId }) {
       </div>
       </div>
 
+      {/* Attention Popup */}
+      {showAttentionPopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 animate-in slide-in-from-bottom-4 duration-300">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">Attention Alert</h3>
+                    <p className="text-sm text-gray-600">Your attention level is at {attention}%</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowAttentionPopup(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="mb-6">
+                <p className="text-gray-700 mb-4">
+                  We've noticed your attention level has dropped. Here are some suggestions to help you refocus:
+                </p>
+                
+                <div className="space-y-3">
+                  {attentionSuggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        suggestion.action();
+                        setShowAttentionPopup(false);
+                      }}
+                      className="w-full p-4 text-left bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 rounded-xl border border-blue-200 hover:border-blue-300 transition-all duration-200 group"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <span className="text-2xl">{suggestion.icon}</span>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            {suggestion.title}
+                          </h4>
+                          <p className="text-sm text-gray-600">{suggestion.description}</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowAttentionPopup(false)}
+                  className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
+                >
+                  Dismiss
+                </button>
+                <button
+                  onClick={() => {
+                    setShowAttentionPopup(false);
+                    // Reset attention to a higher level
+                    setAttention(75);
+                  }}
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                >
+                  I'm Focused Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar + Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Sidebar */}
         <aside className="lg:col-span-4 xl:col-span-3">
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="sticky top-24 bg-white border border-gray-200 rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-200 font-semibold text-gray-900">{t('lessons.modules')}</div>
-            <nav className="p-2 space-y-1 max-h-[60vh] overflow-auto">
+            <nav className="p-2 space-y-1">
               {allModuleKeys.map((key) => (
                 <button
                   key={key}
@@ -457,6 +758,18 @@ function LessonContent({ courseId, moduleId }) {
         {renderTabContent()}
             </div>
 
+            {/* Success Message */}
+            {moduleCompleted && (
+              <div className="px-6 py-4 bg-green-50 border-t border-green-200">
+                <div className="flex items-center justify-center space-x-2 text-green-800">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="font-medium">Module completed successfully! Great job! 🎉</span>
+                </div>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
               <div className="flex items-center justify-between">
@@ -469,7 +782,9 @@ function LessonContent({ courseId, moduleId }) {
                     course.completedModules[moduleId] = mod;
                     saved[courseId] = course;
                     localStorage.setItem('nv_progress', JSON.stringify(saved));
-                    setCompletedModules({...completedModules, [moduleId]: {text: true, quiz: true, video: true}});
+                    setModuleCompleted(true);
+                    // Auto-hide success message after 3 seconds
+                    setTimeout(() => setModuleCompleted(false), 3000);
                   }}
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
