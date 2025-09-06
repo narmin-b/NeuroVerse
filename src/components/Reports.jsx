@@ -227,20 +227,13 @@ function StudentPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center py-10 px-2 md:px-8">
       <div className="max-w-6xl w-full bg-white rounded-2xl shadow-2xl p-4 md:p-10 relative animate-fadeIn">
-        {/* Navigation buttons */}
-        <div className="absolute top-4 right-4 flex items-center space-x-2">
+        {/* Navigation button */}
+        <div className="absolute top-4 right-4">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate('/reports')}
             className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium"
           >
             ← Go Back
-          </button>
-          <button
-            className="text-gray-400 hover:text-gray-700 text-2xl"
-            onClick={() => window.history.back()}
-            aria-label="Close"
-          >
-            &times;
           </button>
         </div>
         {/* Header: Avatar and Name */}
