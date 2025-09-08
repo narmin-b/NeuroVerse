@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function ManageClasses() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const [classes, setClasses] = useState(() => {
     const savedClasses = localStorage.getItem('teacherClasses');
     return savedClasses ? JSON.parse(savedClasses) : [
@@ -59,6 +62,19 @@ function ManageClasses() {
   useEffect(() => {
     localStorage.setItem('teacherClasses', JSON.stringify(classes));
   }, [classes]);
+
+  // Auto-open edit modal if editClassId is provided via URL
+  useEffect(() => {
+    const editId = searchParams.get('editClassId');
+    if (editId) {
+      const cls = classes.find(c => c.id === editId);
+      if (cls) {
+        setSelectedClass(cls);
+        setEditClassData({ name: cls.name, description: cls.description });
+        setShowEditClassForm(true);
+      }
+    }
+  }, [searchParams, classes]);
 
   const handleCreateClass = (e) => {
     e.preventDefault();
@@ -168,8 +184,8 @@ function ManageClasses() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Manage Classes</h1>
-          <p className="text-gray-600 mt-2">Create and manage your classes and students</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('manage.header')}</h1>
+          <p className="text-gray-600 mt-2">{t('manage.subheader')}</p>
         </div>
 
         {/* Create Class Button */}
@@ -178,7 +194,7 @@ function ManageClasses() {
             onClick={() => setShowCreateForm(true)}
             className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
           >
-            + Create New Class
+            + {t('manage.createNewClass')}
           </button>
         </div>
 
@@ -186,11 +202,11 @@ function ManageClasses() {
         {showCreateForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h2 className="text-xl font-semibold mb-4">Create New Class</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('manage.createNewClass')}</h2>
               <form onSubmit={handleCreateClass}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Class Name
+                    {t('manage.className')}
                   </label>
                   <input
                     type="text"
@@ -202,7 +218,7 @@ function ManageClasses() {
                 </div>
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
+                    {t('manage.description')}
                   </label>
                   <textarea
                     value={newClass.description}
@@ -217,14 +233,14 @@ function ManageClasses() {
                     type="submit"
                     className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
                   >
-                    Create Class
+                    {t('manage.createClass')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
                     className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
                   >
-                    Cancel
+                    {t('lessons.cancel')}
                   </button>
                 </div>
               </form>
@@ -243,14 +259,14 @@ function ManageClasses() {
                     <p className="text-gray-600 mt-1">{cls.description}</p>
                   </div>
                   <span className="text-sm text-gray-500">
-                    {cls.students.length} students
+                    {cls.students.length} {t('reports.studentsCount')}
                   </span>
                 </div>
 
                 {/* Students List */}
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-3">
-                    <h4 className="font-medium text-gray-900">Students</h4>
+                    <h4 className="font-medium text-gray-900">{t('reports.students')}</h4>
                     <button
                       onClick={() => {
                         setSelectedClass(cls);
@@ -258,7 +274,7 @@ function ManageClasses() {
                       }}
                       className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                     >
-                      + Add Student
+                      + {t('manage.addStudent')}
                     </button>
                   </div>
                   
@@ -281,13 +297,13 @@ function ManageClasses() {
                                 : 'bg-gray-100 text-gray-700'
                             }`}
                           >
-                            {student.status === 'active' ? 'Active' : 'Inactive'}
+                            {student.status === 'active' ? t('reports.active') : t('reports.inactive')}
                           </button>
                           <button
                             onClick={() => removeStudent(cls.id, student.id)}
                             className="text-xs px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200"
                           >
-                            Remove
+                            {t('manage.remove')}
                           </button>
                         </div>
                       </div>
@@ -301,13 +317,13 @@ function ManageClasses() {
                     onClick={() => navigate(`/reports?classId=${cls.id}`)}
                     className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors text-sm"
                   >
-                    View Reports
+                    {t('manage.viewReports')}
                   </button>
                   <button 
                     onClick={() => openEditClass(cls)}
                     className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors text-sm"
                   >
-                    Edit Class
+                    {t('manage.editClass')}
                   </button>
                 </div>
               </div>
@@ -320,12 +336,12 @@ function ManageClasses() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
               <h2 className="text-xl font-semibold mb-4">
-                Add Student to {selectedClass.name}
+                {t('manage.addStudentTo', { name: selectedClass.name })}
               </h2>
               <form onSubmit={handleAddStudent}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Student Name
+                    {t('manage.studentName')}
                   </label>
                   <input
                     type="text"
@@ -337,7 +353,7 @@ function ManageClasses() {
                 </div>
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
+                    {t('manage.email')}
                   </label>
                   <input
                     type="email"
@@ -352,7 +368,7 @@ function ManageClasses() {
                     type="submit"
                     className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
                   >
-                    Add Student
+                    {t('manage.addStudent')}
                   </button>
                   <button
                     type="button"
@@ -362,7 +378,7 @@ function ManageClasses() {
                     }}
                     className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
                   >
-                    Cancel
+                    {t('lessons.cancel')}
                   </button>
                 </div>
               </form>
@@ -374,14 +390,14 @@ function ManageClasses() {
         {showEditClassForm && selectedClass && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-semibold mb-4">Edit Class: {selectedClass.name}</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('manage.editClassWithName', { name: selectedClass.name })}</h2>
               
               {/* Class Details Form */}
               <form onSubmit={handleEditClass} className="mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Class Name
+                      {t('manage.className')}
                     </label>
                     <input
                       type="text"
@@ -393,7 +409,7 @@ function ManageClasses() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Description
+                      {t('manage.description')}
                     </label>
                     <textarea
                       value={editClassData.description}
@@ -409,7 +425,7 @@ function ManageClasses() {
                     type="submit"
                     className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
                   >
-                    Save Changes
+                    {t('manage.saveChanges')}
                   </button>
                   <button
                     type="button"
@@ -420,7 +436,7 @@ function ManageClasses() {
                     }}
                     className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
                   >
-                    Cancel
+                    {t('lessons.cancel')}
                   </button>
                 </div>
               </form>
@@ -428,7 +444,7 @@ function ManageClasses() {
               {/* Students Management */}
               <div className="border-t pt-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold">Manage Students</h3>
+                  <h3 className="text-lg font-semibold">{t('manage.manageStudents')}</h3>
                   <button
                     onClick={() => {
                       setShowEditClassForm(false);
@@ -436,7 +452,7 @@ function ManageClasses() {
                     }}
                     className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
                   >
-                    + Add New Student
+                    + {t('manage.addNewStudent')}
                   </button>
                 </div>
                 
@@ -465,13 +481,13 @@ function ManageClasses() {
                               : 'bg-gray-100 text-gray-700'
                           }`}
                         >
-                          {student.status === 'active' ? 'Active' : 'Inactive'}
+                          {student.status === 'active' ? t('reports.active') : t('reports.inactive')}
                         </button>
                         <button
                           onClick={() => removeStudent(selectedClass.id, student.id)}
                           className="text-xs px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200"
                         >
-                          Delete
+                          {t('manage.delete')}
                         </button>
                       </div>
                     </div>

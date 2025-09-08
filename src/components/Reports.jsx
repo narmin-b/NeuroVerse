@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Routes, Route, useSearchParams } from 'react-router-dom';
 import LiveCharts from './LiveCharts.jsx';
+import { useTranslation } from 'react-i18next';
 
 // Get classes data from localStorage (same as ManageClasses)
 function getClassesData() {
@@ -89,6 +90,7 @@ function getLastNDates(n) {
 
 function ReportsMain({ selectedClassId }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [classes, setClasses] = useState(getClassesData());
   const selectedClass = classes.find(c => c.id === selectedClassId) || classes[0];
   
@@ -135,7 +137,15 @@ function ReportsMain({ selectedClassId }) {
 
   return (
     <div className="flex-1 p-8 overflow-y-auto">
-      <h2 className="text-2xl font-bold mb-6">{selectedClass.name} - Students</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold">{selectedClass.name} - {t('reports.students')}</h2>
+        <button
+          onClick={() => navigate(`/manage-classes?editClassId=${selectedClass.id}`)}
+          className="text-sm px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors"
+        >
+          {t('manage.editClass')}
+        </button>
+      </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {students.map(student => (
           <div
@@ -151,14 +161,14 @@ function ReportsMain({ selectedClassId }) {
               </div>
               {student.active ? (
                 <>
-                  <div className="text-sm text-gray-500 mb-1">Active</div>
+                  <div className="text-sm text-gray-500 mb-1">{t('reports.active')}</div>
                   <div className="flex items-center text-sm">
-                    <span className="mr-2">EEG:</span>
+                    <span className="mr-2">{t('reports.eeg')}:</span>
                     <span className="font-semibold text-indigo-700">{liveData[student.id]?.eeg}%</span>
                   </div>
                 </>
               ) : (
-                <div className="text-sm text-gray-500">Inactive</div>
+                <div className="text-sm text-gray-500">{t('reports.inactive')}</div>
               )}
             </div>
           </div>
@@ -171,6 +181,7 @@ function ReportsMain({ selectedClassId }) {
 function StudentPage() {
   const { classId, studentId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [classes, setClasses] = useState(getClassesData());
   const selectedClass = classes.find(c => c.id === classId) || classes[0];
   const student = selectedClass.students.find(s => s.id === studentId);
@@ -207,7 +218,7 @@ function StudentPage() {
     kevin: 'Intro to C',
     lisa: 'Intro to Java',
   };
-  const currentCourse = student ? studentCourses[student.id] || 'No course assigned' : '';
+  const currentCourse = student ? studentCourses[student.id] || t('reports.noCourseAssigned') : '';
 
   useEffect(() => {
     if (student?.active) {
@@ -222,7 +233,7 @@ function StudentPage() {
     }
   }, [student]);
 
-  if (!student) return <div className="p-10 text-center text-red-600">Student not found.</div>;
+  if (!student) return <div className="p-10 text-center text-red-600">{t('reports.studentNotFound')}</div>;
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center py-10 px-2 md:px-8">
@@ -233,7 +244,7 @@ function StudentPage() {
             onClick={() => navigate('/reports')}
             className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium"
           >
-            ← Go Back
+            ← {t('reports.goBack')}
           </button>
         </div>
         {/* Header: Avatar and Name */}
@@ -244,7 +255,7 @@ function StudentPage() {
               <h3 className="text-2xl font-bold">{student.name}</h3>
               <span className="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-semibold">{currentCourse}</span>
             </div>
-            <div className="text-sm text-gray-500">{student.active ? 'Active' : 'Inactive'}</div>
+            <div className="text-sm text-gray-500">{student.active ? t('reports.active') : t('reports.inactive')}</div>
           </div>
         </div>
         {/* Live Charts Section */}
@@ -256,7 +267,7 @@ function StudentPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* AI Analysis */}
           <div className="bg-white rounded-xl shadow p-6 flex flex-col border-l-4 border-indigo-200">
-            <span className="font-semibold mb-2">AI Analysis</span>
+            <span className="font-semibold mb-2">{t('reports.aiAnalysis')}</span>
             <div className="mt-1 text-gray-700">
               {aiAnalysis.split('. ').map((part, idx) => {
                 if (part.toLowerCase().includes('attention trend')) {
@@ -272,11 +283,11 @@ function StudentPage() {
           
           {/* Quiz Stats */}
           <div className="bg-indigo-50 rounded-xl shadow p-6 flex flex-col">
-            <span className="font-extrabold mb-4 text-lg">Quiz Success/Fail Rate</span>
+            <span className="font-extrabold mb-4 text-lg">{t('reports.quizSuccessFail')}</span>
             <div className="mt-2 text-xl font-bold flex items-center gap-4">
-              <span className="text-green-700">Success: <span className="text-green-600 font-extrabold">{quiz.success}</span></span>
+              <span className="text-green-700">{t('reports.success')}: <span className="text-green-600 font-extrabold">{quiz.success}</span></span>
               <span className="text-gray-400 font-extrabold text-2xl">/</span>
-              <span className="text-red-700">Fail: <span className="text-red-600 font-extrabold">{quiz.fail}</span></span>
+              <span className="text-red-700">{t('reports.fail')}: <span className="text-red-600 font-extrabold">{quiz.fail}</span></span>
             </div>
           </div>
         </div>
@@ -284,10 +295,10 @@ function StudentPage() {
         {/* Material Balance Controls */}
         <div className="mt-6">
           <div className="bg-white rounded-xl shadow p-6 border border-indigo-100">
-            <span className="font-semibold mb-4 text-lg">Modify Course Material Balance</span>
+            <span className="font-semibold mb-4 text-lg">{t('reports.modifyMaterialBalance')}</span>
             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 mt-2">
               <label className="flex flex-col items-center text-base font-bold w-full">
-                Text
+                {t('reports.text')}
                 <input
                   type="range"
                   min="0"
@@ -300,7 +311,7 @@ function StudentPage() {
                 <span className="text-indigo-700 text-lg font-extrabold">{material.text}%</span>
               </label>
               <label className="flex flex-col items-center text-base font-bold w-full">
-                Video
+                {t('reports.video')}
                 <input
                   type="range"
                   min="0"
@@ -313,7 +324,7 @@ function StudentPage() {
                 <span className="text-indigo-700 text-lg font-extrabold">{material.video}%</span>
               </label>
               <label className="flex flex-col items-center text-base font-bold w-full">
-                Quiz
+                {t('reports.quiz')}
                 <input
                   type="range"
                   min="0"
@@ -334,6 +345,7 @@ function StudentPage() {
 }
 
 export default function Reports() {
+  const { t } = useTranslation();
   const [classes, setClasses] = useState(getClassesData());
   const [searchParams, setSearchParams] = useSearchParams();
   const classIdFromUrl = searchParams.get('classId');
@@ -397,7 +409,7 @@ export default function Reports() {
         <div className="flex h-screen bg-gray-50">
           {/* Sidebar */}
           <div className="w-64 bg-white shadow-lg p-6">
-            <h2 className="text-xl font-bold mb-6">Classes</h2>
+            <h2 className="text-xl font-bold mb-6">{t('reports.classes')}</h2>
             <div className="space-y-2">
               {classes.map(cls => (
                 <button
@@ -410,7 +422,7 @@ export default function Reports() {
                   }`}
                 >
                   <div className="font-medium">{cls.name}</div>
-                  <div className="text-sm text-gray-500">{cls.students.length} students</div>
+                  <div className="text-sm text-gray-500">{cls.students.length} {t('reports.studentsCount')}</div>
                 </button>
               ))}
             </div>
