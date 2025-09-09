@@ -40,7 +40,7 @@ function CourseIntroduction({ courseId, onStartCourse, isEnrolled, onEnroll }) {
           {/* Progress */}
           <div className="mt-6 max-w-xl">
             <div className="flex justify-between text-sm text-indigo-100 mb-1">
-              <span>İlerleme</span>
+              <span>{t('myLessons.progress')}</span>
               <span>{completedCount}/{moduleKeys.length} · {progressPct}%</span>
             </div>
             <div className="w-full bg-white/20 rounded-full h-2">
@@ -457,7 +457,7 @@ function LessonContent({ courseId, moduleId }) {
                 </svg>
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-3">{quizData?.title}</h2>
-              <p className="text-gray-600 text-lg">Beyin uyumlu öğrenme için tasarlanmış interaktif sınav</p>
+              <p className="text-gray-600 text-lg">{t('brainAligned.quizDesc')}</p>
             </div>
             <div className="space-y-6">
               {(quizData?.questions || []).map((question, qIndex) => (
@@ -522,7 +522,7 @@ function LessonContent({ courseId, moduleId }) {
                 </svg>
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-3">{videoData?.title}</h2>
-              <p className="text-gray-600 text-lg">Beyin uyumlu öğrenme için optimize edilmiş video içerik</p>
+              <p className="text-gray-600 text-lg">{t('brainAligned.videoDesc')}</p>
             </div>
             
             <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden shadow-2xl">
@@ -647,8 +647,8 @@ function LessonContent({ courseId, moduleId }) {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">Attention Alert</h3>
-                    <p className="text-sm text-gray-600">Your attention level is at {attention}%</p>
+                    <h3 className="text-lg font-bold text-gray-900">{t('attentionPopup.title')}</h3>
+                    <p className="text-sm text-gray-600">{t('attentionPopup.message', { value: attention })}</p>
                   </div>
                 </div>
                 <button
@@ -662,9 +662,7 @@ function LessonContent({ courseId, moduleId }) {
               </div>
               
               <div className="mb-6">
-                <p className="text-gray-700 mb-4">
-                  We've noticed your attention level has dropped. Here are some suggestions to help you refocus:
-                </p>
+                <p className="text-gray-700 mb-4">{t('attentionPopup.intro')}</p>
                 
                 <div className="space-y-3">
                   {attentionSuggestions.map((suggestion, index) => (
@@ -761,19 +759,17 @@ function LessonContent({ courseId, moduleId }) {
                   <h1 className="text-2xl font-bold text-white mb-1">
                     {moduleData?.title || courseData.modules[moduleId]?.title}
                   </h1>
-                  <p className="text-blue-100 text-sm">
-                    Modül {allModuleKeys.indexOf(moduleId) + 1} / {allModuleKeys.length}
-                  </p>
+                  <p className="text-blue-100 text-sm">{t('lessons.modules')} {allModuleKeys.indexOf(moduleId) + 1} / {allModuleKeys.length}</p>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <span className="text-white text-sm font-medium">EEG Aktif</span>
+                      <span className="text-white text-sm font-medium">{t('eeg.active')}</span>
                     </div>
                   </div>
                   <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-                    <span className="text-white text-sm font-medium">{attention}% Dikkat</span>
+                    <span className="text-white text-sm font-medium">{t('eeg.attentionShort', { value: attention })}</span>
                   </div>
                 </div>
               </div>
@@ -954,6 +950,69 @@ function Lessons() {
       const map = JSON.parse(localStorage.getItem('studentClass') || '{}');
       const classId = map[currentUser.username];
       if (!classId) {
+        // Check join status
+        const joinStatus = JSON.parse(localStorage.getItem('studentJoinStatus') || '{}')[currentUser.username];
+        if (joinStatus?.status === 'pending') {
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-red-50 flex items-center justify-center p-8">
+              <div className="max-w-lg w-full bg-white rounded-2xl shadow p-6 text-center">
+                <h1 className="text-2xl font-extrabold text-indigo-800 mb-2">Onay Bekleniyor</h1>
+                <p className="text-gray-700">Sınıf katılım isteğiniz öğretmeninize iletildi. Onaylandığında derslere erişebileceksiniz.</p>
+                <div className="mt-4 text-sm text-gray-600">Sınıf: <span className="font-medium">{joinStatus.classId}</span></div>
+                <div className="mt-6">
+                  <a href="/contact" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium">Destek ile İletişime Geç</a>
+                </div>
+              </div>
+            </div>
+          );
+        }
+        if (joinStatus?.status === 'rejected') {
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center p-8">
+              <div className="max-w-lg w-full bg-white rounded-2xl shadow p-6">
+                <h1 className="text-2xl font-extrabold text-red-700 mb-2 text-center">Katılım Reddedildi</h1>
+                <p className="text-gray-700 mb-4 text-center">Öğretmeniniz katılım isteğinizi reddetti.</p>
+                {joinStatus.reason && (
+                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-3 text-sm mb-4">{joinStatus.reason}</div>
+                )}
+                <p className="text-sm text-gray-600 mb-3 text-center">İsterseniz başka bir sınıf kodu ile tekrar deneyebilirsiniz.</p>
+                <div className="space-y-3">
+                  <input
+                    value={joinCode}
+                    onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(''); }}
+                    placeholder="Örn: ABC123"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  />
+                  {joinError && <div className="text-red-600 text-sm">{joinError}</div>}
+                  <button
+                    onClick={() => {
+                      const code = (joinCode || '').toUpperCase().trim();
+                      if (!code) { setJoinError('Lütfen sınıf kodu girin'); return; }
+                      const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
+                      const cls = classes.find(c => (c.code || '').toUpperCase() === code);
+                      if (!cls) { setJoinError('Kod bulunamadı. Öğretmeninizle kontrol edin.'); return; }
+                      // queue pending request
+                      const allReq = JSON.parse(localStorage.getItem('classJoinRequests') || '{}');
+                      const arr = Array.isArray(allReq[cls.id]) ? allReq[cls.id] : [];
+                      if (!arr.find(r => r.username === currentUser.username)) {
+                        arr.push({ username: currentUser.username, email: currentUser.email || '', ts: Date.now(), status: 'pending' });
+                      }
+                      allReq[cls.id] = arr;
+                      localStorage.setItem('classJoinRequests', JSON.stringify(allReq));
+                      const st = JSON.parse(localStorage.getItem('studentJoinStatus') || '{}');
+                      st[currentUser.username] = { classId: cls.id, status: 'pending' };
+                      localStorage.setItem('studentJoinStatus', JSON.stringify(st));
+                      navigate(0);
+                    }}
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium"
+                  >
+                    Yeniden Başvur
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
         return (
           <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-red-50 flex items-center justify-center p-8">
             <div className="max-w-lg w-full bg-white rounded-2xl shadow p-6">
@@ -974,18 +1033,17 @@ function Lessons() {
                     const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
                     const cls = classes.find(c => (c.code || '').toUpperCase() === code);
                     if (!cls) { setJoinError('Kod bulunamadı. Öğretmeninizle kontrol edin.'); return; }
-                    // Add mapping
-                    try {
-                      const map2 = JSON.parse(localStorage.getItem('studentClass') || '{}');
-                      map2[currentUser.username] = cls.id;
-                      localStorage.setItem('studentClass', JSON.stringify(map2));
-                    } catch (_) {}
-                    // Add to roster if missing
-                    const exists = (cls.students || []).some(s => s.id === currentUser.username);
-                    if (!exists) {
-                      const updated = classes.map(c => c.id === cls.id ? { ...c, students: [...(c.students||[]), { id: currentUser.username, name: currentUser.username, email: currentUser.email || '', status: 'active' }] } : c);
-                      localStorage.setItem('teacherClasses', JSON.stringify(updated));
+                    // Create pending join request instead of immediate enrollment
+                    const allReq = JSON.parse(localStorage.getItem('classJoinRequests') || '{}');
+                    const arr = Array.isArray(allReq[cls.id]) ? allReq[cls.id] : [];
+                    if (!arr.find(r => r.username === currentUser.username)) {
+                      arr.push({ username: currentUser.username, email: currentUser.email || '', ts: Date.now(), status: 'pending' });
                     }
+                    allReq[cls.id] = arr;
+                    localStorage.setItem('classJoinRequests', JSON.stringify(allReq));
+                    const st = JSON.parse(localStorage.getItem('studentJoinStatus') || '{}');
+                    st[currentUser.username] = { classId: cls.id, status: 'pending' };
+                    localStorage.setItem('studentJoinStatus', JSON.stringify(st));
                     navigate(0);
                   }}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium"
@@ -1011,7 +1069,7 @@ function Lessons() {
             <div className="mt-6 flex justify-center">
               <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700">EEG Takip Aktif</span>
+                <span className="text-sm font-medium text-gray-700">{t('eeg.trackingActive')}</span>
               </div>
             </div>
           </div>
@@ -1096,13 +1154,13 @@ function Lessons() {
                         <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
-                        <span>{Object.keys(t(`lessonsContent.${course.id}.modules`)).filter((k) => k !== 'quiz' && k !== 'video').length} Modül</span>
+                        <span>{t('lessons.moduleCountLabel', { count: Object.keys(t(`lessonsContent.${course.id}.modules`)).filter((k) => k !== 'quiz' && k !== 'video').length })}</span>
                       </div>
                       <div className="flex items-center space-x-2 text-gray-600">
                         <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>EEG Takip</span>
+                        <span>{t('eeg.tracking')}</span>
                       </div>
                     </div>
                     
@@ -1110,7 +1168,7 @@ function Lessons() {
                       <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
-                      <span>Beyin Uyumlu Öğrenme</span>
+                      <span>{t('brainAligned.learning')}</span>
                     </div>
                   </div>
                   

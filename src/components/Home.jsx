@@ -12,7 +12,7 @@ export default function Home({ user }) {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([
-    { id: 'sys-1', from: 'ai', text: 'Merhaba! Ben NeuroVerse AI Yardımcı. Bugün neye odaklanmak istersin?' }
+    { id: 'sys-1', from: 'ai', text: t('chat.greeting') }
   ]);
   const [chatBusy, setChatBusy] = useState(false);
   const [recsLoading, setRecsLoading] = useState(true);
@@ -32,7 +32,7 @@ export default function Home({ user }) {
 
     // Try live AI first; falls back to simple hint when not configured
     const reply = await generateAIResponse(
-      `Kısa ve motive edici bir öğrenme koçu gibi cevap ver. Öğrenci ismi: ${username || 'Öğrenci'}. Soru: ${trimmed}.`
+      `${i18n.language === 'tr' ? 'Kısa ve motive edici bir öğrenme koçu gibi cevap ver.' : 'Reply briefly like a motivating learning coach.'} ${i18n.language === 'tr' ? 'Öğrenci ismi' : 'Student name'}: ${username || (i18n.language === 'tr' ? 'Öğrenci' : 'Student')}. ${i18n.language === 'tr' ? 'Soru' : 'Question'}: ${trimmed}.`
     );
     pushMessage('ai', reply);
     setChatBusy(false);
@@ -78,33 +78,23 @@ export default function Home({ user }) {
         <section className="relative overflow-hidden pt-24 pb-16 px-6 md:px-12">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
             <div>
-              <h1 className="text-4xl md:text-6xl font-extrabold text-indigo-700 leading-tight">
-                AI Destekli Akıllı Öğrenme
-              </h1>
-              <p className="mt-4 text-lg md:text-2xl text-gray-700">
-                EEG tabanlı dikkat takibi ve uyarlanabilir içerikle her öğrenciye özel, etkileyici bir öğrenme deneyimi.
-              </p>
+              <h1 className="text-4xl md:text-6xl font-extrabold text-indigo-700 leading-tight">{t('home.heroTitle')}</h1>
+              <p className="mt-4 text-lg md:text-2xl text-gray-700">{t('home.heroSubtitle')}</p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <a href="/auth" className="bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-indigo-800 transition">
-                  Hemen Başla
-                </a>
-                <a href="/features" className="bg-white text-indigo-700 px-6 py-3 rounded-lg font-semibold shadow hover:bg-indigo-50 transition">
-                  Nasıl Çalışır?
-                </a>
+                <a href="/auth" className="bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-indigo-800 transition">{t('home.ctaStart')}</a>
+                <a href="/features" className="bg-white text-indigo-700 px-6 py-3 rounded-lg font-semibold shadow hover:bg-indigo-50 transition">{t('home.ctaHow')}</a>
               </div>
             </div>
             <div className="relative">
               <div className="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-indigo-100 transform hover:scale-[1.01] transition">
                 <img
                   src={eegHero}
-                  alt="EEG başlıklı bir öğrenci"
+                  alt={t('home.heroImgAlt')}
                   className="w-full h-[320px] md:h-[420px] object-cover"
                 />
               </div>
               <div className="absolute -bottom-5 -left-5 bg-white/80 backdrop-blur px-4 py-3 rounded-xl shadow-lg border border-indigo-100">
-                <p className="text-sm text-gray-700">
-                  Gerçek zamanlı dikkat verisiyle içerik dinamik olarak uyarlanır.
-                </p>
+                <p className="text-sm text-gray-700">{t('home.heroBadge')}</p>
               </div>
             </div>
           </div>
@@ -116,26 +106,23 @@ export default function Home({ user }) {
             {/* Student experience */}
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div className="order-2 md:order-1">
-                <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">Öğrenciler için: Anında geri bildirim</h2>
-                <p className="mt-3 text-gray-700 leading-relaxed">
-                  Dikkat seviyeniz düştüğünde sistem otomatik olarak içerik türünü değiştirir: metinden videoya geçer,
-                  kısa bir quiz önerir veya konuyu sadeleştirir. Böylece öğrenme ritminiz korunur.
-                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">{t('home.studentTitle')}</h2>
+                <p className="mt-3 text-gray-700 leading-relaxed">{t('home.studentBody1')} {t('home.studentBody2')}</p>
                 <ul className="mt-4 space-y-2 text-gray-700">
-                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>Kişiselleştirilmiş modül akışı</li>
-                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>EEG ile dikkat takibi</li>
-                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>Anında içerik önerileri</li>
+                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>{t('home.studentBullet1')}</li>
+                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>{t('home.studentBullet2')}</li>
+                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>{t('home.studentBullet3')}</li>
                 </ul>
               </div>
               <div className="order-1 md:order-2">
                 <div className="rounded-2xl overflow-hidden shadow-xl ring-1 ring-indigo-100 group relative">
                   <img
                     src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=1600&auto=format&fit=crop"
-                    alt="Ders içeriği ile etkileşimde bulunan öğrenci"
+                    alt={t('home.studentImageAlt')}
                     className="w-full h-72 object-cover group-hover:scale-[1.02] transition"
                   />
                   <div className="absolute bottom-3 right-3 bg-white/90 px-3 py-1.5 rounded-full text-xs text-indigo-700 shadow">
-                    Adaptif Öğrenme
+                    {t('home.studentImageBadge')}
                   </div>
                 </div>
               </div>
@@ -147,24 +134,21 @@ export default function Home({ user }) {
                 <div className="rounded-2xl overflow-hidden shadow-xl ring-1 ring-indigo-100 group relative">
                   <img
                     src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop"
-                    alt="Bilgisayarda sınıf ilerlemesini izleyen öğretmen"
+                    alt={t('home.teacherImageAlt')}
                     className="w-full h-72 object-cover group-hover:scale-[1.02] transition"
                   />
                   <div className="absolute bottom-3 right-3 bg-white/90 px-3 py-1.5 rounded-full text-xs text-indigo-700 shadow">
-                    Gerçek Zamanlı Paneller
+                    {t('home.teacherImageBadge')}
                   </div>
                 </div>
               </div>
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">Öğretmenler için: Sınıf analitiği</h2>
-                <p className="mt-3 text-gray-700 leading-relaxed">
-                  Öğrencilerin dikkat ve ilerleme verilerini tek ekranda görün. Zorlanan öğrencilere özel içerik atayın,
-                  sınıf genelinde materyal dengesini ayarlayın ve etkili müdahalelerde bulunun.
-                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-indigo-800">{t('home.teacherTitle')}</h2>
+                <p className="mt-3 text-gray-700 leading-relaxed">{t('home.teacherBody1')} {t('home.teacherBody2')}</p>
                 <ul className="mt-4 space-y-2 text-gray-700">
-                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>Ders/öğrenci bazında raporlar</li>
-                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>AI destekli öneriler</li>
-                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>Kolay sınıf yönetimi</li>
+                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>{t('reports.classes')} / {t('reports.students')}</li>
+                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>AI</li>
+                  <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-indigo-600"></span>{t('manage.header')}</li>
                 </ul>
               </div>
             </div>
@@ -185,8 +169,8 @@ export default function Home({ user }) {
               {username ? username.charAt(0).toUpperCase() : 'U'}
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-indigo-800">Hoş geldin{username ? `, ${username}` : ''}!</h1>
-              <p className="text-gray-700">Bugün öğrenmeye nereden devam etmek istersin?</p>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-indigo-800">{t('nav.welcome', { name: username || '' })}</h1>
+              <p className="text-gray-700">{t('home.welcomeQuestion')}</p>
             </div>
           </div>
         </section>
@@ -198,32 +182,32 @@ export default function Home({ user }) {
               <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6"/></svg>
               </div>
-              <h3 className="font-semibold text-indigo-800">Ders Kütüphanesi</h3>
-              <p className="text-sm text-gray-600 mt-1">Yeni ders keşfet ve başla.</p>
+              <h3 className="font-semibold text-indigo-800">{t('home.quickLessonsTitle')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{t('home.quickLessonsDesc')}</p>
             </Link>
 
             <Link to={myLessonsPath} className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
               <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18"/></svg>
               </div>
-              <h3 className="font-semibold text-indigo-800">Derslerim</h3>
-              <p className="text-sm text-gray-600 mt-1">Devam ettiğin modüllere dön.</p>
+              <h3 className="font-semibold text-indigo-800">{t('home.quickMyLessonsTitle')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{t('home.quickMyLessonsDesc')}</p>
             </Link>
 
             <Link to="/lessons" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
               <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 11V3a1 1 0 112 0v8m0 10v-4a4 4 0 10-8 0v4h8z"/></svg>
               </div>
-              <h3 className="font-semibold text-indigo-800">Son Etkinlik</h3>
-              <p className="text-sm text-gray-600 mt-1">Kaldığın yerden devam et.</p>
+              <h3 className="font-semibold text-indigo-800">{t('home.quickRecentTitle')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{t('home.quickRecentDesc')}</p>
             </Link>
 
             <Link to="/contact" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
               <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l.8-4a8.78 8.78 0 01-.8-4c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
               </div>
-              <h3 className="font-semibold text-indigo-800">Destek</h3>
-              <p className="text-sm text-gray-600 mt-1">Yardım mı gerekli? İletişime geç.</p>
+              <h3 className="font-semibold text-indigo-800">{t('home.quickSupportTitle')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{t('home.quickSupportDesc')}</p>
             </Link>
           </div>
         </section>
@@ -261,7 +245,7 @@ export default function Home({ user }) {
 
         {/* AI recommendations */}
         <section className="px-6 md:px-12 pb-24 max-w-6xl mx-auto">
-          <h3 className="text-xl font-bold text-indigo-800 mb-4">AI Önerileri</h3>
+          <h3 className="text-xl font-bold text-indigo-800 mb-4">{t('home.aiRecsTitle')}</h3>
           {recsLoading ? (
             <div className="grid md:grid-cols-3 gap-4">
               {[0,1,2].map((i) => (
@@ -276,10 +260,10 @@ export default function Home({ user }) {
             <div className="grid md:grid-cols-3 gap-4">
               {recs.map((r, idx) => (
                 <div key={idx} className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
-                  <div className="text-xs text-indigo-700 font-semibold mb-2">AI</div>
+                  <div className="text-xs text-indigo-700 font-semibold mb-2">{t('home.aiLabel')}</div>
                   <h4 className="font-semibold text-gray-900">{r.title}</h4>
                   <p className="text-sm text-gray-600 mt-1">{r.description}</p>
-                  <Link to={r.route || '/lessons'} className="inline-block mt-3 text-indigo-700 font-medium hover:underline">{r.cta || 'Git'} →</Link>
+                  <Link to={r.route || '/lessons'} className="inline-block mt-3 text-indigo-700 font-medium hover:underline">{r.cta || t('home.aiCtaGo')} →</Link>
                 </div>
               ))}
             </div>
@@ -290,7 +274,7 @@ export default function Home({ user }) {
         <button
           onClick={() => setChatOpen((v) => !v)}
           className="fixed bottom-6 right-6 z-40 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg w-14 h-14 flex items-center justify-center"
-          aria-label="AI Yardımcı"
+          aria-label={t('chat.toggleAria')}
         >
           <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l.8-4a8.78 8.78 0 01-.8-4c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         </button>
@@ -298,7 +282,7 @@ export default function Home({ user }) {
         {chatOpen && (
           <div className="fixed bottom-24 right-6 z-40 w-80 bg-white rounded-2xl shadow-2xl ring-1 ring-indigo-100 overflow-hidden">
             <div className="bg-indigo-600 text-white px-4 py-3 flex items-center justify-between">
-              <div className="font-semibold">AI Yardımcı</div>
+              <div className="font-semibold">{t('chat.title')}</div>
               <button onClick={() => setChatOpen(false)} className="text-white/90 hover:text-white">✕</button>
             </div>
             <div className="h-64 overflow-y-auto px-3 py-3 space-y-2 bg-indigo-50/40">
@@ -311,10 +295,10 @@ export default function Home({ user }) {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSendChat(); }}
-                placeholder="Soru sor veya öneri iste..."
+                placeholder={t('chat.placeholder')}
                 className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
               />
-              <button onClick={handleSendChat} disabled={chatBusy} className={`px-3 py-2 rounded-lg text-white ${chatBusy ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}>{chatBusy ? 'Bekleyin…' : 'Gönder'}</button>
+              <button onClick={handleSendChat} disabled={chatBusy} className={`px-3 py-2 rounded-lg text-white ${chatBusy ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}>{chatBusy ? t('chat.busy') : t('chat.send')}</button>
             </div>
           </div>
         )}
@@ -325,10 +309,10 @@ export default function Home({ user }) {
   // Authenticated teacher or others - concise hero
   return (
     <section className="flex flex-col items-center justify-center min-h-[60vh] bg-gradient-to-br from-indigo-50 to-white text-center p-10">
-      <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-indigo-700">AI Destekli Akıllı Öğrenme</h1>
-      <p className="text-lg md:text-2xl text-gray-700 mb-8 max-w-2xl">Her öğrenci için kişiselleştirilmiş eğitim, gerçek zamanlı beyin dalgası analizi ve uyarlanabilir AI ile desteklenir.</p>
+      <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-indigo-700">{t('home.heroTitle')}</h1>
+      <p className="text-lg md:text-2xl text-gray-700 mb-8 max-w-2xl">{t('home.heroSubtitle')}</p>
       <a href={role === 'student' ? '/lessons' : '/reports'} className="bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-indigo-800 transition">
-        Devam Et
+        {i18n.language === 'tr' ? 'Devam Et' : 'Continue'}
       </a>
     </section>
   );

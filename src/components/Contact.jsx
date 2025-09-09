@@ -17,15 +17,15 @@ export default function Contact() {
 
   return (
     <section className="py-16 px-4 max-w-xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-10 text-indigo-700">Bizimle İletişime Geçin</h2>
+      <h2 className="text-3xl font-bold text-center mb-10 text-indigo-700">{t('contact.header')}</h2>
       {submitted ? (
-        <div className="bg-green-100 text-green-800 p-6 rounded text-center font-semibold">Mesajınız için teşekkürler!</div>
+        <div className="bg-green-100 text-green-800 p-6 rounded text-center font-semibold">{t('contact.thankYou')}</div>
       ) : (
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-8 flex flex-col space-y-4">
           <input
             type="text"
             name="name"
-            placeholder="Adınız"
+            placeholder={t('contact.placeholderName')}
             value={form.name}
             onChange={handleChange}
             className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -34,7 +34,7 @@ export default function Contact() {
           <input
             type="email"
             name="email"
-            placeholder="E-posta Adresiniz"
+            placeholder={t('contact.placeholderEmail')}
             value={form.email}
             onChange={handleChange}
             className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -42,14 +42,14 @@ export default function Contact() {
           />
           <textarea
             name="message"
-            placeholder="Mesajınız"
+            placeholder={t('contact.placeholderMessage')}
             value={form.message}
             onChange={handleChange}
             className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             rows={5}
             required
           />
-          <button type="submit" className="bg-indigo-700 text-white px-6 py-2 rounded font-semibold hover:bg-indigo-800 transition">Mesaj Gönder</button>
+          <button type="submit" className="bg-indigo-700 text-white px-6 py-2 rounded font-semibold hover:bg-indigo-800 transition">{t('contact.submit')}</button>
         </form>
       )}
     </section>

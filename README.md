@@ -1,5 +1,20 @@
 # 🧠 NeuroVerse - AI-Powered Brain-Adaptive Learning Platform
 
+## 🆕 What's New (Recent Updates)
+
+- Dynamic logged-out Home with engaging hero and explainer sections (EEG visuals)
+- Student Home dashboard: quick actions, mini activity summary, image
+- AI Helper Chat powered by Google Gemini (env: `VITE_GEMINI_API_KEY`)
+- AI Recommendations panel on Home with personalized study cards
+- Class join approval workflow:
+  - Students apply with class code → "Onay Bekleniyor" state until approved
+  - Teachers manage Pending Requests per class (approve/decline + optional rejection note)
+- Enrollment gating: lessons locked until student is approved and enrolled
+- Profile page showing class, enrollments, finished counts, and per-course progress
+- Lesson renderer upgrades: inline `code` styling and fenced ```python blocks
+- Expanded Python course content (EN/TR) with Strings, Dictionaries, Tuples, Sets, Files, Exceptions
+- Logout refresh fix: Home now re-renders immediately based on auth state
+
 ## 🎯 Project Overview
 
 NeuroVerse is an innovative, AI-powered interactive learning platform specifically designed to revolutionize education through real-time brain wave monitoring and adaptive content delivery. The platform combines advanced EEG (Electroencephalogram) simulation with comprehensive programming education, making learning truly personalized and brain-optimized for each individual student.
@@ -54,6 +69,8 @@ NeuroVerse is an innovative, AI-powered interactive learning platform specifical
 **User Profiles:** Highly personalized learning experiences with custom preferences  
 **Session Management:** Secure session handling with automatic timeout and recovery  
 **Data Privacy:** Comprehensive data protection with GDPR-compliant privacy controls  
+**Teacher Approval Workflow:** Students join classes with a code and enter a pending state until the teacher approves  
+**Join Requests Queue:** Teachers can approve/decline pending requests per class with optional rejection reason shown to students
 
 ### 🌍 Comprehensive Internationalization
 
@@ -72,6 +89,8 @@ NeuroVerse is an innovative, AI-powered interactive learning platform specifical
 **Engagement Analysis:** Advanced analysis of learning engagement and comprehension patterns  
 **Adaptive Difficulty:** Dynamic difficulty adjustment based on real-time performance data  
 **Learning Insights:** AI-generated insights and recommendations for improved learning outcomes  
+**Gemini Chat Assistant:** Built-in AI helper chat powered by Google Gemini for coaching and Q&A (env: `VITE_GEMINI_API_KEY`)  
+**AI Recommendations:** Home dashboard shows AI-generated study cards tailored to recent activity and attention
 
 ### 🎯 Advanced Learning Tools
 
@@ -81,6 +100,8 @@ NeuroVerse is an innovative, AI-powered interactive learning platform specifical
 **Version Control Integration:** Git-like version control for student projects  
 **Collaborative Features:** Real-time collaboration tools for peer learning  
 **Assessment Engine:** Comprehensive testing and evaluation system with detailed feedback  
+**Inline Code Formatting:** Lesson text supports inline backticks and fenced blocks with styling  
+**Dynamic Lesson Renderer:** Auto-detects and formats inline and multi-line code blocks in course content
 
 ### 📱 Cross-Platform Compatibility
 

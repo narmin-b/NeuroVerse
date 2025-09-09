@@ -57,11 +57,18 @@ function ManageClasses() {
   const [newClass, setNewClass] = useState({ name: '', description: '' });
   const [newStudent, setNewStudent] = useState({ name: '', email: '' });
   const [editClassData, setEditClassData] = useState({ name: '', description: '' });
+  const [pendingRequests, setPendingRequests] = useState(() => JSON.parse(localStorage.getItem('classJoinRequests') || '{}'));
+  const [rejectionNotes, setRejectionNotes] = useState({});
 
   // Save classes to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('teacherClasses', JSON.stringify(classes));
   }, [classes]);
+
+  // persist requests
+  useEffect(() => {
+    localStorage.setItem('classJoinRequests', JSON.stringify(pendingRequests));
+  }, [pendingRequests]);
 
   // Auto-open edit modal if editClassId is provided via URL
   useEffect(() => {
@@ -299,6 +306,78 @@ function ManageClasses() {
                     >
                       Yenile
                     </button>
+                  </div>
+                </div>
+
+                {/* Pending Requests */}
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900">Bekleyen İstekler</h4>
+                    <button
+                      onClick={() => setPendingRequests(JSON.parse(localStorage.getItem('classJoinRequests') || '{}'))}
+                      className="text-sm text-indigo-600 hover:text-indigo-700"
+                    >Yenile</button>
+                  </div>
+                  <div className="space-y-3">
+                    {(pendingRequests[cls.id] || []).length === 0 && (
+                      <div className="text-sm text-gray-500">Bekleyen istek yok.</div>
+                    )}
+                    {(pendingRequests[cls.id] || []).map((req, idx) => (
+                      <div key={idx} className="p-3 bg-gray-50 rounded border border-gray-200">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">{req.username}</div>
+                            <div className="text-xs text-gray-600">{req.email}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                // approve: add to class students
+                                const exists = (cls.students || []).some(s => s.id === req.username);
+                                const updatedClasses = classes.map(c => c.id === cls.id ? {
+                                  ...c,
+                                  students: exists ? c.students : [...(c.students || []), { id: req.username, name: req.username, email: req.email, status: 'active' }]
+                                } : c);
+                                setClasses(updatedClasses);
+                                // update pending
+                                const copy = { ...(pendingRequests) };
+                                copy[cls.id] = (copy[cls.id] || []).filter(r => r.username !== req.username);
+                                setPendingRequests(copy);
+                                // student status
+                                const st = JSON.parse(localStorage.getItem('studentJoinStatus') || '{}');
+                                st[req.username] = { classId: cls.id, status: 'approved' };
+                                localStorage.setItem('studentJoinStatus', JSON.stringify(st));
+                                // map class for student
+                                const map = JSON.parse(localStorage.getItem('studentClass') || '{}');
+                                map[req.username] = cls.id;
+                                localStorage.setItem('studentClass', JSON.stringify(map));
+                              }}
+                              className="px-3 py-1.5 text-white bg-green-600 hover:bg-green-700 rounded text-sm"
+                            >Kabul</button>
+                            <button
+                              onClick={() => {
+                                const reason = rejectionNotes[`${cls.id}:${req.username}`] || '';
+                                const copy = { ...(pendingRequests) };
+                                copy[cls.id] = (copy[cls.id] || []).filter(r => r.username !== req.username);
+                                setPendingRequests(copy);
+                                const st = JSON.parse(localStorage.getItem('studentJoinStatus') || '{}');
+                                st[req.username] = { classId: cls.id, status: 'rejected', reason };
+                                localStorage.setItem('studentJoinStatus', JSON.stringify(st));
+                              }}
+                              className="px-3 py-1.5 text-white bg-red-600 hover:bg-red-700 rounded text-sm"
+                            >Reddet</button>
+                          </div>
+                        </div>
+                        <div className="mt-2">
+                          <input
+                            placeholder="(Opsiyonel) Reddetme nedeni"
+                            value={rejectionNotes[`${cls.id}:${req.username}`] || ''}
+                            onChange={(e) => setRejectionNotes({ ...rejectionNotes, [`${cls.id}:${req.username}`]: e.target.value })}
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

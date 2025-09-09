@@ -75,16 +75,17 @@ function Auth({ onLogin }) {
           setError('Geçerli bir sınıf kodu giriniz');
           return;
         }
-        // Add student to class roster (by username)
-        const newStudent = { id: formData.username, name: formData.username, email: formData.email, status: 'active' };
-        const updated = classes.map(c => c.id === cls.id ? { ...c, students: [...c.students, newStudent] } : c);
-        localStorage.setItem('teacherClasses', JSON.stringify(updated));
-        // Track student's class mapping
-        try {
-          const map = JSON.parse(localStorage.getItem('studentClass') || '{}');
-          map[formData.username] = cls.id;
-          localStorage.setItem('studentClass', JSON.stringify(map));
-        } catch (_) {}
+        // Create a pending join request instead of immediate enrollment
+        const allReq = JSON.parse(localStorage.getItem('classJoinRequests') || '{}');
+        const arr = Array.isArray(allReq[cls.id]) ? allReq[cls.id] : [];
+        if (!arr.find(r => r.username === formData.username)) {
+          arr.push({ username: formData.username, email: formData.email, ts: Date.now(), status: 'pending' });
+        }
+        allReq[cls.id] = arr;
+        localStorage.setItem('classJoinRequests', JSON.stringify(allReq));
+        const st = JSON.parse(localStorage.getItem('studentJoinStatus') || '{}');
+        st[formData.username] = { classId: cls.id, status: 'pending' };
+        localStorage.setItem('studentJoinStatus', JSON.stringify(st));
       }
 
       const newUser = {

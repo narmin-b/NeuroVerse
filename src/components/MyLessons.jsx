@@ -42,34 +42,10 @@ function MyLessons() {
   ]);
 
   const [recentActivity, setRecentActivity] = useState([
-    {
-      id: 1,
-      course: t('topics.python'),
-      action: 'Modül 3 tamamlandı: Fonksiyonlar',
-      time: '2 saat önce',
-      type: 'completion'
-    },
-    {
-      id: 2,
-      course: t('topics.web'),
-      action: 'Modül 3 başlatıldı: CSS Giriş',
-      time: '1 gün önce',
-      type: 'start'
-    },
-    {
-      id: 3,
-      course: t('topics.js'),
-      action: 'Test alındı: Değişkenler ve Veri Tipleri',
-      time: '2 gün önce',
-      type: 'quiz'
-    },
-    {
-      id: 4,
-      course: t('topics.python'),
-      action: 'Video izlendi: Veri Yapıları',
-      time: '3 gün önce',
-      type: 'video'
-    }
+    { id: 1, course: t('topics.python'), action: t('myLessons.activity.completion', { num: 3, name: 'Fonksiyonlar' }), time: t('myLessons.activity.timeAgoHours', { count: 2 }), type: 'completion' },
+    { id: 2, course: t('topics.web'), action: t('myLessons.activity.start', { num: 3, name: 'CSS Giriş' }), time: t('myLessons.activity.timeAgoDays', { count: 1 }), type: 'start' },
+    { id: 3, course: t('topics.js'), action: t('myLessons.activity.quiz', { name: 'Değişkenler ve Veri Tipleri' }), time: t('myLessons.activity.timeAgoDays', { count: 2 }), type: 'quiz' },
+    { id: 4, course: t('topics.python'), action: t('myLessons.activity.video', { name: 'Veri Yapıları' }), time: t('myLessons.activity.timeAgoDays', { count: 3 }), type: 'video' }
   ]);
 
   const [stats, setStats] = useState({
@@ -108,7 +84,7 @@ function MyLessons() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">{t('nav.myLessons')}</h1>
-          <p className="text-gray-600 mt-2">Öğrenme ilerlemenizi takip edin ve kaldığınız yerden devam edin</p>
+          <p className="text-gray-600 mt-2">{t('myLessons.headerSubtitle')}</p>
         </div>
 
         {/* Progress Dashboard */}
@@ -121,7 +97,7 @@ function MyLessons() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">Kayıtlı Kurslar</h2>
+                <h2 className="text-xl font-semibold text-gray-900">{t('myLessons.enrolledCourses')}</h2>
               </div>
               <div className="p-6">
                 <div className="space-y-6">
@@ -130,14 +106,14 @@ function MyLessons() {
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900 mb-1">{course.title}</h3>
-                          <p className="text-sm text-gray-600">Sonraki: {course.nextModule}</p>
+                          <p className="text-sm text-gray-600">{t('myLessons.next')}: {course.nextModule}</p>
                         </div>
-                        <span className="text-sm text-gray-500">Son erişim: {course.lastAccessed}</span>
+                        <span className="text-sm text-gray-500">{t('myLessons.lastAccess')}: {course.lastAccessed}</span>
                       </div>
                       
                       <div className="mb-4">
                         <div className="flex justify-between text-sm text-gray-600 mb-2">
-                          <span>İlerleme</span>
+                          <span>{t('myLessons.progress')}</span>
                           <span className={`font-semibold ${getProgressColor(course.progress)}`}>
                             {course.progress}%
                           </span>
@@ -157,8 +133,8 @@ function MyLessons() {
                       </div>
 
                       <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
-                        <span>Modüller: {course.completedModules}/{course.totalModules}</span>
-                        <span>Geçen süre: {course.timeSpent}</span>
+                        <span>{t('myLessons.modulesLabel', { completed: course.completedModules, total: course.totalModules })}</span>
+                        <span>{t('myLessons.timeSpent', { time: course.timeSpent })}</span>
                       </div>
 
                       <div className="flex space-x-3">
@@ -166,10 +142,10 @@ function MyLessons() {
                           to={`/lessons/${course.id}`}
                           className="flex-1 bg-indigo-600 text-white text-center py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors font-medium"
                         >
-                          Öğrenmeye Devam Et
+                          {t('myLessons.continueLearning')}
                         </Link>
                         <Link to={`/lessons/${course.id}/details`} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                          Detayları Görüntüle
+                          {t('myLessons.viewDetails')}
                         </Link>
                       </div>
                     </div>
@@ -183,7 +159,7 @@ function MyLessons() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">Son Aktiviteler</h2>
+                <h2 className="text-xl font-semibold text-gray-900">{t('myLessons.recentActivities')}</h2>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
@@ -212,7 +188,7 @@ function MyLessons() {
                     to="/lessons"
                     className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                   >
-                    Tüm aktiviteleri görüntüle →
+                    {t('myLessons.viewAllActivities')} →
                   </Link>
                 </div>
               </div>

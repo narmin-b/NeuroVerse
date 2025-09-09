@@ -62,7 +62,7 @@ export default function Profile() {
 
   if (!data?.user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">Oturum bulunamadı.</div>
+      <div className="min-h-screen flex items-center justify-center">{t('profile.noSession')}</div>
     );
   }
 
@@ -76,7 +76,7 @@ export default function Profile() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold text-indigo-800">{data.username}</h1>
-            <div className="text-sm text-gray-600">Rol: {data.role}</div>
+            <div className="text-sm text-gray-600">{t('profile.roleLabel')}: {data.role}</div>
           </div>
         </div>
 
@@ -84,26 +84,26 @@ export default function Profile() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {data.role === 'student' && (
             <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
-              <div className="text-xs text-gray-500 mb-1">Sınıf</div>
+              <div className="text-xs text-gray-500 mb-1">{t('profile.classLabel')}</div>
               <div className="text-gray-900 font-semibold">{data.className || '—'}</div>
             </div>
           )}
           <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
-            <div className="text-xs text-gray-500 mb-1">Toplam Kayıtlı Ders</div>
+            <div className="text-xs text-gray-500 mb-1">{t('profile.totalEnrolled')}</div>
             <div className="text-indigo-700 text-2xl font-bold">{data.enrolledCount}</div>
           </div>
           <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
-            <div className="text-xs text-gray-500 mb-1">Bitirilen Ders</div>
+            <div className="text-xs text-gray-500 mb-1">{t('profile.totalFinished')}</div>
             <div className="text-indigo-700 text-2xl font-bold">{data.finishedCount}</div>
           </div>
           {data.teacherStats && (
             <>
               <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
-                <div className="text-xs text-gray-500 mb-1">Sınıf Sayısı</div>
+                <div className="text-xs text-gray-500 mb-1">{t('profile.classCount')}</div>
                 <div className="text-indigo-700 text-2xl font-bold">{data.teacherStats.classCount}</div>
               </div>
               <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
-                <div className="text-xs text-gray-500 mb-1">Öğrenci Sayısı</div>
+                <div className="text-xs text-gray-500 mb-1">{t('profile.studentCount')}</div>
                 <div className="text-indigo-700 text-2xl font-bold">{data.teacherStats.studentCount}</div>
               </div>
             </>
@@ -113,11 +113,11 @@ export default function Profile() {
         {/* Enrollments list */}
         <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Derslerim</h2>
-            <Link to="/lessons" className="text-indigo-700 text-sm hover:underline">Derslere git →</Link>
+            <h2 className="text-lg font-semibold text-gray-900">{t('profile.myLessons')}</h2>
+            <Link to="/lessons" className="text-indigo-700 text-sm hover:underline">{t('profile.goToLessons')} →</Link>
           </div>
           {data.courseSummaries.length === 0 ? (
-            <div className="text-sm text-gray-600">Henüz kayıtlı dersiniz yok.</div>
+            <div className="text-sm text-gray-600">{t('profile.noneEnrolled')}</div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-4">
               {data.courseSummaries.map((c) => (
@@ -126,7 +126,7 @@ export default function Profile() {
                   <div className="w-full bg-gray-100 rounded h-2 overflow-hidden">
                     <div className="h-2 bg-indigo-600" style={{ width: `${c.percent}%` }}></div>
                   </div>
-                  <div className="text-sm text-gray-600 mt-2">{c.percent}% tamamlandı</div>
+                  <div className="text-sm text-gray-600 mt-2">{t('profile.percentComplete', { percent: c.percent })}</div>
                 </div>
               ))}
             </div>
