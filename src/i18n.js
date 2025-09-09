@@ -15,6 +15,7 @@ const resources = {
         reports: "Raporlar",
         manageClasses: "Sınıfları Yönet",
         myLessons: "Derslerim",
+        profile: "Profil",
         logout: "Çıkış"
       },
       manage: {
@@ -192,6 +193,32 @@ const resources = {
         goToLessons: "Derslere git",
         noneEnrolled: "Henüz kayıtlı dersiniz yok.",
         percentComplete: "%{{percent}} tamamlandı"
+      },
+
+      auth: {
+        signInTitle: "Hesabınıza giriş yapın",
+        signUpTitle: "Hesabınızı oluşturun",
+        welcomeBack: "NeuroVerse'e tekrar hoş geldiniz",
+        joinToday: "Bugün NeuroVerse'e katılın",
+        iam: "Ben bir:",
+        student: "Öğrenci",
+        teacher: "Öğretmen",
+        username: "Kullanıcı Adı",
+        email: "E-posta",
+        classCode: "Sınıf Kodu (Öğretmeninizden alın)",
+        password: "Şifre",
+        confirmPassword: "Şifreyi Onayla",
+        signIn: "Giriş Yap",
+        signUp: "Hesap Oluştur",
+        toggleToSignUp: "Hesabınız yok mu? Kayıt olun",
+        toggleToSignIn: "Zaten hesabınız var mı? Giriş yapın",
+        passwordsNoMatch: "Şifreler eşleşmiyor",
+        invalidCredentials: "Geçersiz kullanıcı adı veya şifre",
+        usernameExists: "Kullanıcı adı zaten mevcut",
+        requireClassCode: "Geçerli bir sınıf kodu giriniz",
+        demoCredentialsTitle: "Demo Giriş Bilgileri:",
+        studentsDemo: "Öğrenciler: student1/password123, student2/password123",
+        teachersDemo: "Öğretmenler: teacher1/password123, teacher2/password123"
       },
 
       contact: {
@@ -614,6 +641,7 @@ const resources = {
         reports: "Reports",
         manageClasses: "Manage Classes",
         myLessons: "My Lessons",
+        profile: "Profile",
         logout: "Logout"
       },
       reports: {
@@ -791,6 +819,32 @@ const resources = {
         goToLessons: "Go to lessons",
         noneEnrolled: "You have no enrolled courses yet.",
         percentComplete: "{{percent}}% complete"
+      },
+
+      auth: {
+        signInTitle: "Sign in to your account",
+        signUpTitle: "Create your account",
+        welcomeBack: "Welcome back to NeuroVerse",
+        joinToday: "Join NeuroVerse today",
+        iam: "I am a:",
+        student: "Student",
+        teacher: "Teacher",
+        username: "Username",
+        email: "Email",
+        classCode: "Class Code (from your teacher)",
+        password: "Password",
+        confirmPassword: "Confirm Password",
+        signIn: "Sign In",
+        signUp: "Create Account",
+        toggleToSignUp: "Don't have an account? Sign up",
+        toggleToSignIn: "Already have an account? Sign in",
+        passwordsNoMatch: "Passwords do not match",
+        invalidCredentials: "Invalid username or password",
+        usernameExists: "Username already exists",
+        requireClassCode: "Please enter a valid class code",
+        demoCredentialsTitle: "Demo Credentials:",
+        studentsDemo: "Students: student1/password123, student2/password123",
+        teachersDemo: "Teachers: teacher1/password123, teacher2/password123"
       },
 
       contact: {

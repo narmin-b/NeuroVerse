@@ -135,9 +135,26 @@ function LessonContent({ courseId, moduleId }) {
   
   const tabs = [
     { id: 'text', label: t('lessons.tabs.text'), icon: '📖' },
+    ...(courseId === 'python' ? [{ id: 'practice', label: 'Practice', icon: '💻' }] : []),
     { id: 'quiz', label: t('lessons.tabs.quiz'), icon: '📝' },
     { id: 'video', label: t('lessons.tabs.video'), icon: '🎥' }
   ];
+
+  // Load JDoodle script only when Practice tab is active
+  useEffect(() => {
+    if (activeTab !== 'practice') return;
+    const existing = document.getElementById('jdoodle-pym');
+    if (!existing) {
+      const s = document.createElement('script');
+      s.id = 'jdoodle-pym';
+      s.src = 'https://www.jdoodle.com/assets/jdoodle-pym.min.js';
+      s.async = true;
+      document.body.appendChild(s);
+    } else {
+      // Re-execute if JDoodle global is available (handles re-render)
+      try { if (window.pym) { window.pym.autoInit(); } } catch (e) {}
+    }
+  }, [activeTab]);
 
   // Reset quiz state when module changes
   useEffect(() => {
@@ -351,6 +368,24 @@ function LessonContent({ courseId, moduleId }) {
                   return [renderBlock(b, idx)];
                 });
               })()}
+            </div>
+          </div>
+        );
+      case 'practice':
+        return (
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full mb-4">
+                <span className="text-2xl">💻</span>
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Practice</h2>
+              <p className="text-gray-600">Try code interactively before taking the quiz.</p>
+            </div>
+            <div className="rounded-xl overflow-hidden border border-gray-200 shadow">
+              <div
+                data-pym-src="https://www.jdoodle.com/embed/v1/f48595f2451bbd87"
+                style={{ minHeight: 600 }}
+              />
             </div>
           </div>
         );

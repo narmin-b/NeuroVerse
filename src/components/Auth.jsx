@@ -40,7 +40,7 @@ function Auth({ onLogin }) {
     setError('');
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
-      setError('Şifreler eşleşmiyor');
+      setError(t('auth.passwordsNoMatch'));
       return;
     }
 
@@ -55,7 +55,7 @@ function Auth({ onLogin }) {
         onLogin(session);
         navigate(role === 'student' ? '/lessons' : '/reports');
       } else {
-        setError('Geçersiz kullanıcı adı veya şifre');
+        setError(t('auth.invalidCredentials'));
       }
     } else {
       // Register logic
@@ -63,7 +63,7 @@ function Auth({ onLogin }) {
       const existingUser = users.find(u => u.username === formData.username);
       
       if (existingUser) {
-        setError('Kullanıcı adı zaten mevcut');
+        setError(t('auth.usernameExists'));
         return;
       }
 
@@ -72,7 +72,7 @@ function Auth({ onLogin }) {
         const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
         const cls = classes.find(c => (c.code || '').toUpperCase() === (formData.classCode || '').toUpperCase());
         if (!cls) {
-          setError('Geçerli bir sınıf kodu giriniz');
+          setError(t('auth.requireClassCode'));
           return;
         }
         // Create a pending join request instead of immediate enrollment
@@ -111,21 +111,15 @@ function Auth({ onLogin }) {
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            {isLogin ? 'Hesabınıza giriş yapın' : 'Hesabınızı oluşturun'}
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {isLogin ? 'NeuroVerse\'e tekrar hoş geldiniz' : 'Bugün NeuroVerse\'e katılın'}
-          </p>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">{isLogin ? t('auth.signInTitle') : t('auth.signUpTitle')}</h2>
+          <p className="mt-2 text-sm text-gray-600">{isLogin ? t('auth.welcomeBack') : t('auth.joinToday')}</p>
         </div>
 
         <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Role Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ben bir:
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.iam')}</label>
               <div className="flex space-x-4">
                 <label className="flex items-center">
                   <input
@@ -136,7 +130,7 @@ function Auth({ onLogin }) {
                     onChange={(e) => setRole(e.target.value)}
                     className="mr-2"
                   />
-                  <span className="text-sm">Öğrenci</span>
+                  <span className="text-sm">{t('auth.student')}</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -147,16 +141,14 @@ function Auth({ onLogin }) {
                     onChange={(e) => setRole(e.target.value)}
                     className="mr-2"
                   />
-                  <span className="text-sm">Öğretmen</span>
+                  <span className="text-sm">{t('auth.teacher')}</span>
                 </label>
               </div>
             </div>
 
             {/* Username */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Kullanıcı Adı
-              </label>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">{t('auth.username')}</label>
               <input
                 id="username"
                 name="username"
@@ -171,9 +163,7 @@ function Auth({ onLogin }) {
             {/* Email (only for registration) */}
             {!isLogin && (
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  E-posta
-                </label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">{t('auth.email')}</label>
                 <input
                   id="email"
                   name="email"
@@ -189,9 +179,7 @@ function Auth({ onLogin }) {
             {/* Class Code (students only, required to join) */}
             {!isLogin && role === 'student' && (
               <div>
-                <label htmlFor="classCode" className="block text-sm font-medium text-gray-700">
-                  Sınıf Kodu (Öğretmeninizden alın)
-                </label>
+                <label htmlFor="classCode" className="block text-sm font-medium text-gray-700">{t('auth.classCode')}</label>
                 <input
                   id="classCode"
                   name="classCode"
@@ -206,9 +194,7 @@ function Auth({ onLogin }) {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Şifre
-              </label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">{t('auth.password')}</label>
               <input
                 id="password"
                 name="password"
@@ -223,9 +209,7 @@ function Auth({ onLogin }) {
             {/* Confirm Password (only for registration) */}
             {!isLogin && (
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Şifreyi Onayla
-                </label>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">{t('auth.confirmPassword')}</label>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -251,7 +235,7 @@ function Auth({ onLogin }) {
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                {isLogin ? 'Giriş Yap' : 'Hesap Oluştur'}
+                {isLogin ? t('auth.signIn') : t('auth.signUp')}
               </button>
             </div>
 
@@ -266,15 +250,15 @@ function Auth({ onLogin }) {
                 }}
                 className="text-indigo-600 hover:text-indigo-500 text-sm"
               >
-                {isLogin ? "Hesabınız yok mu? Kayıt olun" : 'Zaten hesabınız var mı? Giriş yapın'}
+                {isLogin ? t('auth.toggleToSignUp') : t('auth.toggleToSignIn')}
               </button>
             </div>
 
             {/* Demo Credentials */}
             <div className="text-center text-xs text-gray-500 bg-gray-50 p-3 rounded">
-              <p className="font-semibold mb-1">Demo Giriş Bilgileri:</p>
-              <p>Öğrenciler: student1/password123, student2/password123</p>
-              <p>Öğretmenler: teacher1/password123, teacher2/password123</p>
+              <p className="font-semibold mb-1">{t('auth.demoCredentialsTitle')}</p>
+              <p>{t('auth.studentsDemo')}</p>
+              <p>{t('auth.teachersDemo')}</p>
             </div>
           </form>
         </div>

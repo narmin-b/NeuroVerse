@@ -153,7 +153,7 @@ function Navbar({ user, onLogout }) {
                   className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                   onClick={() => setShowDropdown(false)}
                 >
-                  Profil
+                  {t('nav.profile')}
                 </Link>
                 <button
                   onClick={() => {
