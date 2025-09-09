@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import eegHero from '../assets/1*_6UZ0O0nMR7bLIdNf-_LyQ.jpg';
+import eegHero from '../assets/homepageEEG.jpg';
 import { generateAIResponse, getAIRecommendations } from '../services/ai.js';
 
 export default function Home({ user }) {
