@@ -1064,7 +1064,7 @@ function Lessons() {
   
   const handleStartModule = (courseId) => {
     // Start with the first module (variables for python, html_basics for web, beginning for js)
-    const firstModules = { python: 'variables', web: 'html_basics', js: 'beginning' };
+    const firstModules = { python: 'variables', web: 'html_fundamentals', js: 'beginning' };
     const targetModule = firstModules[courseId];
     navigate(`/lessons/${courseId}/${targetModule}`);
   };
@@ -1398,7 +1398,7 @@ function Lessons() {
   
   // If both course and module are selected, show lesson content
   // Validate moduleId exists; if not, redirect to first module
-  const firstModules = { python: 'variables', web: 'html_basics', js: 'beginning' };
+  const firstModules = { python: 'variables', web: 'html_fundamentals', js: 'beginning' };
   const courseData = t(`lessonsContent.${courseId}`);
   const validModules = courseData && courseData.modules ? Object.keys(courseData.modules) : [];
   

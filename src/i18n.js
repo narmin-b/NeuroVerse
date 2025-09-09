@@ -1838,7 +1838,39 @@ const resources = {
             ]
           },
           modules: {
-            html_basics: { title: "HTML Basics", text: "HTML forms the skeleton of web pages. Example: <h1>Hello</h1>." },
+            html_fundamentals: { 
+              title: "HTML Fundamentals", 
+              text: [
+                "HTML (HyperText Markup Language) is the standard markup language for creating web pages. It provides the structure and content of web pages.",
+                "Every HTML document starts with a DOCTYPE declaration and has a basic structure:",
+                "```<!DOCTYPE html>\n<html>\n<head>\n    <title>Page Title</title>\n</head>\n<body>\n    <h1>This is a Heading</h1>\n    <p>This is a paragraph.</p>\n</body>\n</html>```",
+                "Key HTML concepts:",
+                "• Elements: Building blocks of HTML (e.g., <p>, <h1>, <div>)",
+                "• Tags: Markup that defines elements (<p>content</p>)",
+                "• Attributes: Additional information about elements (class, id, src)",
+                "• Nesting: Elements can contain other elements",
+                "• Self-closing tags: Elements that don't need closing tags (<img>, <br>)",
+                "",
+                "HTML5 introduced semantic elements for better structure:",
+                "• <header> - Introductory content",
+                "• <nav> - Navigation links",
+                "• <main> - Main content",
+                "• <section> - Thematic grouping",
+                "• <article> - Independent content",
+                "• <aside> - Sidebar content",
+                "• <footer> - Footer content"
+              ],
+              quiz: { 
+                title: "HTML Fundamentals Quiz", 
+                questions: [ 
+                  { q: "What does HTML stand for?", a: ["HyperText Markup Language", "High Tech Modern Language", "Home Tool Markup Language"], correct: 0 },
+                  { q: "Which tag is used for the main heading?", a: ["<h1>", "<head>", "<header>"], correct: 0 },
+                  { q: "What is the purpose of the DOCTYPE declaration?", a: ["Define page title", "Specify HTML version", "Add CSS styles"], correct: 1 },
+                  { q: "Which is a self-closing tag?", a: ["<p>", "<img>", "<div>"], correct: 1 }
+                ] 
+              },
+              video: { title: "HTML Fundamentals", description: "Introduction to HTML structure and basic elements" }
+            },
             headings_paragraphs: { title: "Headings and Paragraphs", text: "Headings via h1–h6, paragraphs via p." },
             html_forms: { 
               title: "HTML Forms & Input Types", 
