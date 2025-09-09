@@ -1,22 +1,75 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import eegHero from '../assets/1*_6UZ0O0nMR7bLIdNf-_LyQ.jpg';
+import { generateAIResponse, getAIRecommendations } from '../services/ai.js';
 
-export default function Home() {
-  const { t } = useTranslation();
+export default function Home({ user }) {
+  const { t, i18n } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
+  const [username, setUsername] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { id: 'sys-1', from: 'ai', text: 'Merhaba! Ben NeuroVerse AI Yardımcı. Bugün neye odaklanmak istersin?' }
+  ]);
+  const [chatBusy, setChatBusy] = useState(false);
+  const [recsLoading, setRecsLoading] = useState(true);
+  const [recs, setRecs] = useState([]);
+
+  const pushMessage = (from, text) => {
+    setChatMessages((prev) => [...prev, { id: `${from}-${Date.now()}`, from, text }]);
+  };
+
+  const handleSendChat = async () => {
+    const trimmed = chatInput.trim();
+    if (!trimmed) return;
+    pushMessage('you', trimmed);
+    setChatInput('');
+    if (chatBusy) return;
+    setChatBusy(true);
+
+    // Try live AI first; falls back to simple hint when not configured
+    const reply = await generateAIResponse(
+      `Kısa ve motive edici bir öğrenme koçu gibi cevap ver. Öğrenci ismi: ${username || 'Öğrenci'}. Soru: ${trimmed}.`
+    );
+    pushMessage('ai', reply);
+    setChatBusy(false);
+  };
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('currentUser');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setIsAuthenticated(Boolean(parsed?.isAuthenticated));
-        setRole(parsed?.role || null);
-      }
-    } catch (_) {}
-  }, []);
+    // Prefer prop if provided; else read from localStorage
+    const source = user || (function(){ try { return JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch(e){ return null; } })();
+    setIsAuthenticated(Boolean(source?.isAuthenticated));
+    setRole(source?.role || null);
+    setUsername(source?.username || '');
+  }, [user]);
+
+  useEffect(() => {
+    // Load AI recommendations when student is authenticated
+    if (isAuthenticated && role === 'student') {
+      const context = {
+        username,
+        recentActivity: {
+          minutes: 180,
+          completedModules: 5,
+          quizSuccessRate: 0.82
+        },
+        interests: ['python', 'web', 'js']
+      };
+      (async () => {
+        setRecsLoading(true);
+        const { items } = await getAIRecommendations(context);
+        setRecs(items && items.length ? items : [
+          { title: 'Kısa Python Tekrarı', description: '10 dakikalık döngüler özeti + mini quiz.', cta: 'Başla', route: '/lessons' },
+          { title: 'Video: JS Fonksiyonlar', description: '6 dakikalık odak video derse ısın.', cta: 'İzle', route: '/lessons' },
+          { title: 'HTML Quiz', description: '5 soruyla hızlı ölçme ve pekiştirme.', cta: 'Quize Git', route: '/lessons' }
+        ]);
+        setRecsLoading(false);
+      })();
+    }
+  }, [isAuthenticated, role, username]);
 
   if (!isAuthenticated) {
     return (
@@ -121,7 +174,155 @@ export default function Home() {
     );
   }
 
-  // Authenticated users - keep concise hero
+  // Authenticated users
+  if (role === 'student') {
+    const myLessonsPath = i18n.language === 'tr' ? '/derslerim' : '/my-lessons';
+    return (
+      <main className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 min-h-[60vh]">
+        <section className="pt-16 pb-8 px-6 md:px-12 max-w-6xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
+              {username ? username.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-indigo-800">Hoş geldin{username ? `, ${username}` : ''}!</h1>
+              <p className="text-gray-700">Bugün öğrenmeye nereden devam etmek istersin?</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick actions */}
+        <section className="px-6 md:px-12 pb-10 max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link to="/lessons" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">Ders Kütüphanesi</h3>
+              <p className="text-sm text-gray-600 mt-1">Yeni ders keşfet ve başla.</p>
+            </Link>
+
+            <Link to={myLessonsPath} className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">Derslerim</h3>
+              <p className="text-sm text-gray-600 mt-1">Devam ettiğin modüllere dön.</p>
+            </Link>
+
+            <Link to="/lessons" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 11V3a1 1 0 112 0v8m0 10v-4a4 4 0 10-8 0v4h8z"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">Son Etkinlik</h3>
+              <p className="text-sm text-gray-600 mt-1">Kaldığın yerden devam et.</p>
+            </Link>
+
+            <Link to="/contact" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l.8-4a8.78 8.78 0 01-.8-4c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">Destek</h3>
+              <p className="text-sm text-gray-600 mt-1">Yardım mı gerekli? İletişime geç.</p>
+            </Link>
+          </div>
+        </section>
+
+        {/* Mini activity summary */}
+        <section className="px-6 md:px-12 pb-16 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-indigo-100">
+              <h4 className="font-semibold text-indigo-800">Haftalık Aktivite</h4>
+              <p className="text-sm text-gray-600">Özet veriler örnektir.</p>
+              <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-indigo-700">3h</div>
+                  <div className="text-xs text-gray-600">Çalışma Süresi</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-indigo-700">5</div>
+                  <div className="text-xs text-gray-600">Tamamlanan Modül</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-indigo-700">82%</div>
+                  <div className="text-xs text-gray-600">Quiz Başarısı</div>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow ring-1 ring-indigo-100">
+              <img
+                src={eegHero}
+                alt="Çalışırken öğrenci"
+                className="w-full h-56 object-cover"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* AI recommendations */}
+        <section className="px-6 md:px-12 pb-24 max-w-6xl mx-auto">
+          <h3 className="text-xl font-bold text-indigo-800 mb-4">AI Önerileri</h3>
+          {recsLoading ? (
+            <div className="grid md:grid-cols-3 gap-4">
+              {[0,1,2].map((i) => (
+                <div key={i} className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100 animate-pulse">
+                  <div className="h-4 w-24 bg-indigo-100 rounded mb-3"></div>
+                  <div className="h-4 w-48 bg-indigo-100 rounded mb-2"></div>
+                  <div className="h-4 w-36 bg-indigo-100 rounded"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-4">
+              {recs.map((r, idx) => (
+                <div key={idx} className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
+                  <div className="text-xs text-indigo-700 font-semibold mb-2">AI</div>
+                  <h4 className="font-semibold text-gray-900">{r.title}</h4>
+                  <p className="text-sm text-gray-600 mt-1">{r.description}</p>
+                  <Link to={r.route || '/lessons'} className="inline-block mt-3 text-indigo-700 font-medium hover:underline">{r.cta || 'Git'} →</Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Floating AI helper chat */}
+        <button
+          onClick={() => setChatOpen((v) => !v)}
+          className="fixed bottom-6 right-6 z-40 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg w-14 h-14 flex items-center justify-center"
+          aria-label="AI Yardımcı"
+        >
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l.8-4a8.78 8.78 0 01-.8-4c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </button>
+
+        {chatOpen && (
+          <div className="fixed bottom-24 right-6 z-40 w-80 bg-white rounded-2xl shadow-2xl ring-1 ring-indigo-100 overflow-hidden">
+            <div className="bg-indigo-600 text-white px-4 py-3 flex items-center justify-between">
+              <div className="font-semibold">AI Yardımcı</div>
+              <button onClick={() => setChatOpen(false)} className="text-white/90 hover:text-white">✕</button>
+            </div>
+            <div className="h-64 overflow-y-auto px-3 py-3 space-y-2 bg-indigo-50/40">
+              {chatMessages.map((m) => (
+                <div key={m.id} className={`max-w-[85%] ${m.from === 'ai' ? 'bg-white text-gray-800' : 'bg-indigo-600 text-white ml-auto'} px-3 py-2 rounded-lg shadow`}>{m.text}</div>
+              ))}
+            </div>
+            <div className="p-3 flex items-center gap-2 border-t">
+              <input
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSendChat(); }}
+                placeholder="Soru sor veya öneri iste..."
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+              <button onClick={handleSendChat} disabled={chatBusy} className={`px-3 py-2 rounded-lg text-white ${chatBusy ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}>{chatBusy ? 'Bekleyin…' : 'Gönder'}</button>
+            </div>
+          </div>
+        )}
+      </main>
+    );
+  }
+
+  // Authenticated teacher or others - concise hero
   return (
     <section className="flex flex-col items-center justify-center min-h-[60vh] bg-gradient-to-br from-indigo-50 to-white text-center p-10">
       <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-indigo-700">AI Destekli Akıllı Öğrenme</h1>

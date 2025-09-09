@@ -11,6 +11,7 @@ import Reports from './components/Reports.jsx';
 import Auth from './components/Auth.jsx';
 import MyLessons from './components/MyLessons.jsx';
 import ManageClasses from './components/ManageClasses.jsx';
+import Profile from './components/Profile.jsx';
 import logo from './assets/nVerse-logo.png';
 
 function Navbar({ user, onLogout }) {
@@ -147,6 +148,13 @@ function Navbar({ user, onLogout }) {
                     </Link>
                   </>
                 )}
+                <Link
+                  to="/profile"
+                  className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  onClick={() => setShowDropdown(false)}
+                >
+                  Profil
+                </Link>
                 <button
                   onClick={() => {
                     onLogout();
@@ -214,7 +222,7 @@ function App() {
       <div className="pt-20">
         <Routes>
         {/* Public routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home user={user} />} />
         <Route path="/features" element={<Features />} />
         <Route path="/benefits" element={<Benefits />} />
         <Route path="/contact" element={<Contact />} />
@@ -251,6 +259,14 @@ function App() {
           element={
             <ProtectedRoute user={user} requiredRole="teacher">
               <ManageClasses />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute user={user}>
+              <Profile />
             </ProtectedRoute>
           } 
         />

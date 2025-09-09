@@ -76,6 +76,13 @@ function ManageClasses() {
     }
   }, [searchParams, classes]);
 
+  const generateClassCode = () => {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
+    return code;
+  };
+
   const handleCreateClass = (e) => {
     e.preventDefault();
     const classId = 'class' + Date.now();
@@ -83,6 +90,7 @@ function ManageClasses() {
       id: classId,
       name: newClass.name,
       description: newClass.description,
+      code: generateClassCode(),
       students: []
     };
     setClasses([...classes, newClassData]);
@@ -261,6 +269,37 @@ function ManageClasses() {
                   <span className="text-sm text-gray-500">
                     {cls.students.length} {t('reports.studentsCount')}
                   </span>
+                </div>
+
+                {/* Class Code */}
+                <div className="mb-4 bg-indigo-50 border border-indigo-200 rounded-md p-3 flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-indigo-700">Sınıf Kodu</div>
+                    <div className="font-mono font-semibold text-indigo-900">{cls.code || 'KOD-YOK'}</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        const code = cls.code || generateClassCode();
+                        navigator.clipboard?.writeText(code);
+                        if (!cls.code) {
+                          setClasses(classes.map(c => c.id === cls.id ? { ...c, code } : c));
+                        }
+                      }}
+                      className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                    >
+                      Kopyala
+                    </button>
+                    <button
+                      onClick={() => {
+                        const code = generateClassCode();
+                        setClasses(classes.map(c => c.id === cls.id ? { ...c, code } : c));
+                      }}
+                      className="text-sm px-3 py-1.5 bg-white border border-indigo-200 text-indigo-700 rounded hover:bg-indigo-50"
+                    >
+                      Yenile
+                    </button>
+                  </div>
                 </div>
 
                 {/* Students List */}

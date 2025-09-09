@@ -130,6 +130,12 @@ const resources = {
               { title: "Koşullu İfadeler" },
               { title: "Fonksiyonlar" },
               { title: "Listeler" },
+              { title: "String'ler" },
+              { title: "Sözlükler" },
+              { title: "Demetler (Tuples)" },
+              { title: "Kümeler (Sets)" },
+              { title: "Dosya İşleme" },
+              { title: "Hatalar/İstisnalar" },
               { title: "Python Quiz" }
             ]
           },
@@ -139,7 +145,12 @@ const resources = {
               text: [
                 "Python'da değişkenler bellek üzerinde bir değere isim vermemizi sağlar. Bir değişken oluşturduğunuzda sağ taraftaki değerin türüne göre otomatik olarak tip atanır.",
                 "Temel veri tipleri: int (tam sayı), float (ondalıklı sayı), str (metin), bool (True/False). Python dinamik tiplidir, yani değişkenin tipini önceden belirtmeniz gerekmez.",
-                "İyi isimlendirme önemlidir. Örneğin toplam_puan yerine tp yazmak kodu okunaksız yapar. Anlamlı, okunaklı ve küçük harfli isimler tercih edilir."
+                "İyi isimlendirme önemlidir. Örneğin toplam_puan yerine tp yazmak kodu okunaksız yapar. Anlamlı, okunaklı ve küçük harfli isimler tercih edilir.",
+                "```python\ntoplam_puan = 42\noyuncu_adi = 'Ada'\nprint(f'{oyuncu_adi}: {toplam_puan}')\n```",
+                "Tip dönüştürme:",
+                "```python\nint('3')\nfloat('3.14')\nstr(42)\n```",
+                "Dönüştürme sırasında ValueError oluşabileceğini unutmayın.",
+                "Çoklu atama ve takas: `x, y = 1, 2`; `x, y = y, x`."
               ],
               quiz: {
                 title: "Final Sınavı",
@@ -155,7 +166,11 @@ const resources = {
               text: [
                 "Döngüler, aynı işlemleri bir liste, dizi ya da sayı aralığı üzerinde tekrarlamak için kullanılır. Python'da en yaygın iki döngü: for ve while.",
                 "for döngüsü bir koleksiyonun elemanlarını sırayla gezer. while döngüsü ise koşul True olduğu sürece çalışır. Sonsuz döngülerden kaçınmak için koşulun değiştiğinden emin olun.",
-                "range(start, stop, step) fonksiyonu belirli bir aralıkta sayılar üretir ve for ile sıklıkla kullanılır."
+                "range(start, stop, step) fonksiyonu belirli bir aralıkta sayılar üretir ve for ile sıklıkla kullanılır.",
+                "```python\nfor i in range(1, 4):\n    print(i)\n```",
+                "Erken çıkış için `break`, bir sonraki adıma atlamak için `continue` kullanılır.",
+                "Indis ile gezinmek için `enumerate(dizi)`; sözlüklerde anahtar/değer için `dict.items()` kullanılabilir.",
+                "Liste üreteçleri: `[x*x for x in range(5) if x%2==0]`."
               ],
               quiz: {
                 title: "Final Sınavı",
@@ -169,8 +184,12 @@ const resources = {
               title: "Koşullu İfadeler", 
               text: [
                 "Koşullar, belirli bir şarta göre farklı kod bloklarının çalıştırılmasını sağlar. if ile başlar, ek durumlar için elif, aksi durum için else kullanılır.",
-                "Karşılaştırma operatörleri (==, !=, <, >, <=, >=) ve mantıksal operatörler (and, or, not) koşul ifadelerinde sıkça kullanılır.",
-                "İç içe koşullar yerine koşulları net ve kısa olacak şekilde düzenlemek, okunabilirliği artırır."
+                "Karşılaştırma operatörleri (`==`, `!=`, `<`, `>`, `<=`, `>=`) ve mantıksal operatörler (`and`, `or`, `not`) sıkça kullanılır.",
+                "İç içe koşullar yerine koşulları net ve kısa olacak şekilde düzenlemek, okunabilirliği artırır.",
+                "Doğruluk/Yanlışlık: boş koleksiyonlar ve 0 False; dolu değerler True sayılır.",
+                "Üçlü ifade: `deger_if_true if kosul else deger_if_false`.",
+                "Üyelik kontrolleri: `if 'py' in 'python': ...`; `if key in my_dict: ...`",
+                "```python\nx = 10\nif x > 10:\n    print('büyük')\nelif x == 10:\n    print('eşit')\nelse:\n    print('küçük')\n```"
               ],
               quiz: {
                 title: "Final Sınavı",
@@ -185,7 +204,10 @@ const resources = {
               text: [
                 "Fonksiyonlar, bir işi kapsülleyerek tekrar kullanmamızı sağlar. def anahtar kelimesi ile tanımlanır ve gerekirse parametre alır.",
                 "Fonksiyon gövdesi içindeki return ifadesi bir değer döndürür. Return yazılmazsa Python None döndürür.",
-                "Parametre varsayılan değer alabilir (ör: def selam(isim='Dünya')). Bu sayede opsiyonel davranışlar tanımlanabilir."
+                "Parametre varsayılan değer alabilir (ör: `def selam(isim='Dünya')`). Bu sayede opsiyonel davranışlar tanımlanabilir.",
+                "Docstring ile fonksiyonun ne yaptığını kısaca açıklayın: `def topla(a, b): \"\"\"Toplamı döndür.\"\"\"`.",
+                "`*args` ve `**kwargs` değişken sayıda argümanı yakalamak için kullanılır.",
+                "```python\ndef selam(isim: str, vurgu: bool = False) -> str:\n    m = f'Merhaba {isim}'\n    return m + '!' if vurgu else m\n```"
               ],
               quiz: {
                 title: "Final Sınavı",
@@ -199,8 +221,11 @@ const resources = {
               title: "Listeler", 
               text: [
                 "Listeler, sıralı ve değiştirebilir veri yapılarıdır. Köşeli parantez ile tanımlanır ve heterojen tipleri içerebilir.",
-                "Temel işlemler: ekleme (append, insert), çıkarma (remove, pop), dilimleme (list[start:stop:step]) ve sıralama (sort).",
-                "Liste üreteçleri (list comprehensions) hızlı ve okunabilir dönüşümler sağlar: [x*x for x in range(5)]."
+                "Temel işlemler: ekleme (`append`, `insert`), çıkarma (`remove`, `pop`), dilimleme (`list[start:stop:step]`) ve sıralama (`sort`).",
+                "Liste üreteçleri (list comprehensions) hızlı ve okunabilir dönüşümler sağlar: `[x*x for x in range(5)]`.",
+                "Sıralama: `my_list.sort()` (yerinde) vs `sorted(my_list)` (yeni liste).",
+                "Kopya oluşturma: `my_list.copy()` veya `list(my_list)`; `a = b` aynı listeyi paylaşır.",
+                "```python\nnums = [3, 1, 2]\nnums.append(5)\nprint(sorted(nums))  # [1, 2, 3, 5]\n```"
               ],
               quiz: {
                 title: "Final Sınavı",
@@ -209,6 +234,61 @@ const resources = {
                 ]
               },
               video: { title: "Listeler", description: "Listelerle çalışma ve dilimleme" }
+            },
+            strings: {
+              title: "String'ler",
+              text: [
+                "String'ler Unicode karakter dizileridir. Tek veya çift tırnakla oluşturulur: `'merhaba'` veya `\"merhaba\"`.",
+                "Yaygın metodlar: `lower()`, `upper()`, `strip()`, `replace()`, `split()`, `join()`.",
+                "Dilimleme: `s[0]`, `s[-1]`, `s[1:4]`.",
+                "f-string ile biçimlendirme: `f\"{isim} puan: {puan}\"`.",
+                "Kaçış dizileri: `\\n` (yeni satır), `\\t` (sekme); ham string için `r'\\yol'`.",
+                "```python\nisim = 'Ada'\npuan = 42\nprint(f'{isim} puan: {puan}')\n```"
+              ]
+            },
+            dictionaries: {
+              title: "Sözlükler",
+              text: [
+                "Sözlükler anahtar-değer eşlemesi tutar: `kullanici = {'isim': 'Ada', 'yas': 36}`.",
+                "Erişim/güncelleme: `kullanici['isim']`, `kullanici.get('rol', 'ogrenci')`, `kullanici['yas'] = 37`.",
+                "Döngü: `items()`, `keys()`, `values()` ile gezinilebilir.",
+                "Faydalı metodlar: `update()`, `pop()`, `setdefault()`, sözlük üreteçleri `{k: v for ...}`.",
+                "Anahtarlar hashlenebilir (değişmez) tipler olmalıdır: `str`, `int` veya değişmez tuple.",
+                "```python\nk = {'isim': 'Ada'}\nk.setdefault('rol', 'ogrenci')\nfor anahtar, deger in k.items():\n    print(anahtar, deger)\n```"
+              ]
+            },
+            tuples: {
+              title: "Demetler (Tuples)",
+              text: [
+                "Demetler sıralı ve değişmez dizilerdir: `(1, 2, 3)`.",
+                "Çoklu dönüş değeri ve sabit kayıtlar için idealdir.",
+                "Açma (unpacking): `x, y = (10, 20)`.",
+                "```python\npt = (10, 20)\nx, y = pt\nprint(x, y)\n```"
+              ]
+            },
+            sets: {
+              title: "Kümeler (Sets)",
+              text: [
+                "Kümeler tekrarsız öğelerden oluşur: `{1, 2, 3}`.",
+                "Birleşim/kesişim/fark gibi işlemler desteklenir.",
+                "```python\na = {1, 2, 3}\nb = {3, 4}\nprint(a | b, a & b, a - b)\n```"
+              ]
+            },
+            files: {
+              title: "Dosya İşleme",
+              text: [
+                "Dosyalar `open(yol, mod)` ile açılır. Kapatmayı unutmayın veya context manager kullanın.",
+                "Yaygın modlar: `\"r\"` (okuma), `\"w\"` (yazma/sıfırlama), `\"a\"` (ekleme), `\"rb\"` (ikili).",
+                "```python\nfrom pathlib import Path\np = Path('notlar.txt')\nwith p.open('w', encoding='utf-8') as f:\n    f.write('Merhaba\\n')\n```"
+              ]
+            },
+            exceptions: {
+              title: "Hatalar/İstisnalar",
+              text: [
+                "Hataları try/except ile yakalayın; gerekirse finally ile temizliği yapın.",
+                "Özel hata fırlatma: `raise ValueError('mesaj')`.",
+                "```python\ntry:\n    n = int('sayi-degil')\nexcept ValueError as e:\n    print('Donusum basarisiz:', e)\n```"
+              ]
             },
             quiz: {
               title: "Final Sınavı",
@@ -488,11 +568,11 @@ const resources = {
             difficulty: "Beginner"
           },
           whatYouWillLearn: [
-            "Python syntax and variables",
-            "Data types and collections",
-            "Loops and conditionals",
-            "Functions",
-            "Simple projects"
+            "Basic Python syntax, variables, and naming",
+            "Core data types: numbers, strings, booleans",
+            "Lists and other collections (list basics)",
+            "Flow control with conditionals and loops",
+            "Function definitions and parameters"
           ],
           syllabus: {
             modules: [
@@ -501,15 +581,90 @@ const resources = {
               { title: "Conditionals" },
               { title: "Functions" },
               { title: "Lists" },
+              { title: "Strings" },
+              { title: "Dictionaries" },
               { title: "Python Quiz" }
             ]
           },
           modules: {
-            variables: { title: "Variables and Data Types", text: "Variables store data. Types: int, float, string, bool." },
-            loops: { title: "Loops", text: "Loops repeat operations. Common loops: for and while." },
-            conditionals: { title: "Conditionals", text: "Control flow using if, elif, else." },
-            functions: { title: "Functions", text: "Reusable code blocks defined with def." },
-            lists: { title: "Lists", text: "Lists hold multiple values. Defined with square brackets." },
+            variables: { 
+              title: "Variables and Data Types", 
+              text: [
+                "A variable binds a name to a value. Python assigns types at runtime (dynamic typing).",
+                "Common types: int (whole numbers), float (decimals), str (text), bool (True/False).",
+                "Use clear, lowercase names with underscores.",
+                "```total_score = 42\nplayer_name = 'Ada'\nprint(f'{player_name}: {total_score}')\n```",
+                "Type conversion:",
+                "```int('3')\nfloat('3.14')\nstr(42)\n```",
+                "Be mindful of ValueError when converting.",
+                "Multiple assignment is supported: `x, y = 1, 2`. You can also swap: `x, y = y, x`.",
+                "Input/output basics: `name = input('Name: ')`; `print(f'Hello {name}')` (f-strings)."
+              ]
+            },
+            loops: { 
+              title: "Loops", 
+              text: [
+                "for iterates over items of a sequence (e.g., list, string, range).",
+                "```for i in range(1, 4):\n    print(i)\n```",
+                "while repeats as long as a condition stays True; ensure the condition eventually changes.",
+                "Use `break` to exit early and `continue` to skip to the next iteration.",
+                "`range(start, stop, step)` is commonly used with for.",
+                "You can loop with indexes via `enumerate(seq)` and over keys/values via `dict.items()`.",
+                "List comprehensions are compact loops that build lists: `[x*x for x in range(5) if x%2==0]`."
+              ]
+            },
+            conditionals: { 
+              title: "Conditionals", 
+              text: [
+                "Use if, elif, else to branch logic based on conditions.",
+                "Comparison operators: `==`, `!=`, `<`, `>`, `<=`, `>=`. Logical operators: `and`, `or`, `not`.",
+                "Keep conditions readable; extract complex checks into well‑named variables.",
+                "Truthy/Falsy: empty containers and 0 are falsy; non‑empty values are truthy.",
+                "Ternary: `expr_if_true if condition else expr_if_false`.",
+                "Membership checks: `if 'py' in 'python': ...`; `if key in my_dict: ...`"
+              ]
+            },
+            functions: { 
+              title: "Functions", 
+              text: [
+                "Define with def name(params): and return a value with return.",
+                "Parameters can have default values and accept variable arguments (`*args`, `**kwargs`).",
+                "Aim for small, single‑purpose functions that are easy to test.",
+                "Docstrings describe behavior: `def add(a, b): \"\"\"Return sum of a and b.\"\"\"`",
+                "Functions are first‑class: pass them as arguments, store them in variables, return them.",
+                "Scope: variables assigned inside a function are local unless declared global/nonlocal."
+              ]
+            },
+            lists: { 
+              title: "Lists", 
+              text: [
+                "Lists are ordered, mutable collections written with square brackets: `[1, 2, 3]`.",
+                "Common ops: `append`, `extend`, `insert`, `remove`, `pop`, slicing (`list[start:stop:step]`).",
+                "List comprehensions provide concise transformations: `[x*x for x in range(5)]`.",
+                "Sorting: `my_list.sort()` (in place) vs `sorted(my_list)` (new list).",
+                "Copy carefully: use `my_list.copy()` or `list(my_list)`, not `a = b` which shares the list."
+              ]
+            },
+            strings: {
+              title: "Strings",
+              text: [
+                "Strings are sequences of Unicode characters. Create with quotes: `'hi'` or `\"hi\"`.",
+                "Common methods: `lower()`, `upper()`, `strip()`, `replace()`, `split()`, `join()`.",
+                "Slicing works like lists: `s[0]`, `s[-1]`, `s[1:4]`.",
+                "Formatted strings (f-strings) embed expressions: `f\"{name} has {points} points\"`.",
+                "Escape sequences: `\\n` (newline), `\\t` (tab), or use raw strings `r'\\path'`."
+              ]
+            },
+            dictionaries: {
+              title: "Dictionaries",
+              text: [
+                "Dictionaries map keys to values: `user = {'name': 'Ada', 'age': 36}`.",
+                "Access/update via keys: `user['name']`, `user.get('role', 'student')`, `user['age'] = 37`.",
+                "Iterate with `items()`, `keys()`, `values()`.",
+                "Useful methods: `update()`, `pop()`, `setdefault()`, dict comprehensions `{k: v for ...}`.",
+                "Keys must be hashable (immutable) types like `str`, `int`, or tuples of immutables."
+              ]
+            },
             quiz: {
               title: "Final Quiz",
               questions: [

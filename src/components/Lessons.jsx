@@ -3,7 +3,7 @@ import { useParams, useNavigate, Routes, Route, useLocation } from 'react-router
 import { useTranslation } from 'react-i18next';
 
 // Course Introduction Component
-function CourseIntroduction({ courseId, onStartCourse }) {
+function CourseIntroduction({ courseId, onStartCourse, isEnrolled, onEnroll }) {
   const { t } = useTranslation();
   const courseData = t(`lessonsContent.${courseId}`);
   const moduleKeys = Object.keys(courseData.modules).filter((k) => k !== 'quiz' && k !== 'video');
@@ -86,15 +86,24 @@ function CourseIntroduction({ courseId, onStartCourse }) {
               </div>
             </div>
             
-            {/* Start Course Button */}
-            <div className="text-center">
+            {/* Enrollment + Start Buttons */}
+            <div className="text-center flex flex-col items-center gap-3">
+              {!isEnrolled && (
+                <button
+                  onClick={onEnroll}
+                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl text-lg font-semibold transition-all shadow-lg hover:shadow-2xl"
+                >
+                  ✅ Derse Kaydol
+                </button>
+              )}
               <button
                 onClick={onStartCourse}
-                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-lg hover:shadow-2xl hover:-translate-y-0.5"
+                disabled={!isEnrolled}
+                className={`inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-lg ${isEnrolled ? 'bg-indigo-600 hover:bg-indigo-700 text-white hover:shadow-2xl hover:-translate-y-0.5' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
               >
                 🚀 {t('lessons.startLesson')}
               </button>
-        </div>
+            </div>
       </div>
     </div>
   );
@@ -296,13 +305,52 @@ function LessonContent({ courseId, moduleId }) {
           <div className="prose max-w-none">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">{moduleData.title}</h2>
             <div className="text-gray-700 leading-relaxed text-lg">
-              {Array.isArray(moduleData.text) ? (
-                moduleData.text.map((para, idx) => (
-                  <p key={idx} className="mb-4">{para}</p>
-                ))
-              ) : (
-                <p className="mb-4">{moduleData.text}</p>
-              )}
+              {(() => {
+                const renderParagraphWithInlineCode = (text, key) => {
+                  const parts = String(text).split(/(`[^`]+`)/g);
+                  return (
+                    <p key={key} className="mb-4">
+                      {parts.map((part, i) => {
+                        if (part.startsWith('`') && part.endsWith('`')) {
+                          const code = part.slice(1, -1);
+                          return (
+                            <code key={i} className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded font-mono text-base">
+                              {code}
+                            </code>
+                          );
+                        }
+                        return <span key={i}>{part}</span>;
+                      })}
+                    </p>
+                  );
+                };
+                const renderBlock = (content, key) => {
+                  const str = String(content);
+                  const trimmed = str.trim();
+                  if (trimmed.startsWith('```') && trimmed.endsWith('```')) {
+                    const inner = trimmed.replace(/^```|```$/g, '');
+                    return (
+                      <pre key={key} className="mb-4 bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto text-base">
+                        <code>{inner}</code>
+                      </pre>
+                    );
+                  }
+                  return renderParagraphWithInlineCode(str, key);
+                };
+                const blocks = Array.isArray(moduleData.text) ? moduleData.text : [moduleData.text];
+                return blocks.flatMap((b, idx) => {
+                  if (typeof b === 'string') {
+                    // If it contains a fenced block, render as a single block to preserve fences
+                    if (b.includes('```')) {
+                      return [renderBlock(b, idx)];
+                    }
+                    if (b.includes('\n')) {
+                      return b.split('\n').map((line, i) => renderBlock(line, `${idx}-${i}`));
+                    }
+                  }
+                  return [renderBlock(b, idx)];
+                });
+              })()}
             </div>
           </div>
         );
@@ -786,7 +834,7 @@ function LessonContent({ courseId, moduleId }) {
                     // Auto-hide success message after 3 seconds
                     setTimeout(() => setModuleCompleted(false), 3000);
                   }}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="px-6 pyw-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   <span className="flex items-center">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -826,6 +874,8 @@ function Lessons() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [joinCode, setJoinCode] = useState('');
+  const [joinError, setJoinError] = useState('');
   
   // Parse the path to get courseId and moduleId
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -862,6 +912,30 @@ function Lessons() {
     }
   ];
   
+  // Enrollment helpers
+  const getCurrentUser = () => {
+    try { return JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch (e) { return null; }
+  };
+  const currentUser = getCurrentUser();
+  const enrollmentKey = 'nv_enrollments';
+  const isEnrolled = (courseId) => {
+    try {
+      const all = JSON.parse(localStorage.getItem(enrollmentKey) || '{}');
+      const userKey = currentUser?.username || '__guest__';
+      return Boolean(all[userKey]?.[courseId]);
+    } catch (e) { return false; }
+  };
+  const enroll = (courseId) => {
+    try {
+      const all = JSON.parse(localStorage.getItem(enrollmentKey) || '{}');
+      const userKey = currentUser?.username || '__guest__';
+      const userEnrolls = all[userKey] || {};
+      userEnrolls[courseId] = true;
+      all[userKey] = userEnrolls;
+      localStorage.setItem(enrollmentKey, JSON.stringify(all));
+    } catch (e) {}
+  };
+
   const handleStartCourse = (courseId) => {
     navigate(`/lessons/${courseId}/intro`);
   };
@@ -874,6 +948,56 @@ function Lessons() {
   
   // If no course is selected, show course selection
   if (!courseId) {
+    // Gate: student must be in a class
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (currentUser?.role === 'student') {
+      const map = JSON.parse(localStorage.getItem('studentClass') || '{}');
+      const classId = map[currentUser.username];
+      if (!classId) {
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-red-50 flex items-center justify-center p-8">
+            <div className="max-w-lg w-full bg-white rounded-2xl shadow p-6">
+              <h1 className="text-2xl font-extrabold text-indigo-800 mb-2 text-center">Sınıf Koduna Katıl</h1>
+              <p className="text-gray-700 mb-4 text-center">Derslere erişmek için öğretmeninizin verdiği sınıf kodunu girin.</p>
+              <div className="space-y-3">
+                <input
+                  value={joinCode}
+                  onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(''); }}
+                  placeholder="Örn: ABC123"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                />
+                {joinError && <div className="text-red-600 text-sm">{joinError}</div>}
+                <button
+                  onClick={() => {
+                    const code = (joinCode || '').toUpperCase().trim();
+                    if (!code) { setJoinError('Lütfen sınıf kodu girin'); return; }
+                    const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
+                    const cls = classes.find(c => (c.code || '').toUpperCase() === code);
+                    if (!cls) { setJoinError('Kod bulunamadı. Öğretmeninizle kontrol edin.'); return; }
+                    // Add mapping
+                    try {
+                      const map2 = JSON.parse(localStorage.getItem('studentClass') || '{}');
+                      map2[currentUser.username] = cls.id;
+                      localStorage.setItem('studentClass', JSON.stringify(map2));
+                    } catch (_) {}
+                    // Add to roster if missing
+                    const exists = (cls.students || []).some(s => s.id === currentUser.username);
+                    if (!exists) {
+                      const updated = classes.map(c => c.id === cls.id ? { ...c, students: [...(c.students||[]), { id: currentUser.username, name: currentUser.username, email: currentUser.email || '', status: 'active' }] } : c);
+                      localStorage.setItem('teacherClasses', JSON.stringify(updated));
+                    }
+                    navigate(0);
+                  }}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium"
+                >
+                  Koda Katıl
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    }
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -990,19 +1114,28 @@ function Lessons() {
                     </div>
                   </div>
                   
-                  {/* Animated CTA Button */}
-                  <button
-                    onClick={() => handleStartCourse(course.id)}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 transform group-hover:scale-105 shadow-lg group-hover:shadow-xl relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center justify-center">
-                    {t('lessons.start')}
-                      <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  </button>
+                  {/* Enroll/Start Buttons */}
+                  {!isEnrolled(course.id) ? (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); enroll(course.id); }}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 transform group-hover:scale-105 shadow-lg group-hover:shadow-xl"
+                    >
+                      ✅ Kaydol
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleStartCourse(course.id); }}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 transform group-hover:scale-105 shadow-lg group-hover:shadow-xl relative overflow-hidden"
+                    >
+                      <span className="relative z-10 flex items-center justify-center">
+                        {t('lessons.start')}
+                        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    </button>
+                  )}
                 </div>
                 
                 {/* Hover glow effect */}
@@ -1030,7 +1163,15 @@ function Lessons() {
   
   // If course is selected but intro page requested (or no module), show introduction
   if (courseId && (!moduleId || isIntro)) {
-    return <CourseIntroduction courseId={courseId} onStartCourse={() => handleStartModule(courseId)} />;
+    const enrolled = isEnrolled(courseId);
+    return (
+      <CourseIntroduction
+        courseId={courseId}
+        onStartCourse={() => handleStartModule(courseId)}
+        isEnrolled={enrolled}
+        onEnroll={() => { enroll(courseId); navigate(0); }}
+      />
+    );
   }
 
   // Details page: attention per module and AI summary (placeholder)
