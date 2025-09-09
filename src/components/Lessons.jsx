@@ -557,45 +557,120 @@ function LessonContent({ courseId, moduleId }) {
                 </svg>
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-3">{videoData?.title}</h2>
-              <p className="text-gray-600 text-lg">{t('brainAligned.videoDesc')}</p>
+              <p className="text-gray-600 text-lg">{videoData?.description || t('brainAligned.videoDesc')}</p>
             </div>
             
             <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative group">
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
+              {videoData?.url ? (
+                // If video URL is available, show embedded video
+                <div className="aspect-video relative">
+                  <iframe
+                    src={videoData.url.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                    title={videoData.title}
+                    className="w-full h-full rounded-t-2xl"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    loading="lazy"
+                  ></iframe>
+                  
+                  {/* Video overlay with EEG tracking indicator */}
+                  <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-lg px-3 py-1">
+                    <div className="flex items-center space-x-2 text-white text-sm">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span>EEG Takip Aktif</span>
+                    </div>
                   </div>
-                  <p className="text-white text-lg font-medium mb-2">Video Oynatıcı</p>
-                  <p className="text-gray-300 text-sm">EEG takip ile optimize edilmiş içerik</p>
+                  
+                  {/* Video progress indicator */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
+                    <div className="h-full bg-gradient-to-r from-red-500 to-pink-500 w-0 animate-pulse"></div>
+                  </div>
                 </div>
-                
-                {/* Video controls overlay */}
-                <div className="absolute bottom-4 left-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="flex items-center space-x-4">
-                    <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              ) : (
+                // Fallback to placeholder if no URL
+                <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative group">
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                       </svg>
-                    </button>
-                    <div className="flex-1 bg-white/20 rounded-full h-2">
-                      <div className="bg-red-500 h-2 rounded-full w-1/3"></div>
                     </div>
-                    <span className="text-white text-sm">2:45 / 8:30</span>
-                    <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </button>
+                    <p className="text-white text-lg font-medium mb-2">Video Oynatıcı</p>
+                    <p className="text-gray-300 text-sm">EEG takip ile optimize edilmiş içerik</p>
+                    <p className="text-gray-400 text-xs mt-2">Video URL'i henüz eklenmemiş</p>
+                  </div>
+                  
+                  {/* Video controls overlay */}
+                  <div className="absolute bottom-4 left-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex items-center space-x-4">
+                      <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </button>
+                      <div className="flex-1 bg-white/20 rounded-full h-2">
+                        <div className="bg-red-500 h-2 rounded-full w-1/3"></div>
+                      </div>
+                      <span className="text-white text-sm">0:00 / 0:00</span>
+                      <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-white mb-3">Video Açıklaması</h3>
                 <p className="text-gray-300 leading-relaxed">{videoData?.description}</p>
+                
+                {videoData?.url && (
+                  <div className="mt-4 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-medium text-gray-300">Video Bilgileri</h4>
+                      <div className="flex items-center space-x-2 text-xs text-gray-400">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span>Canlı EEG Takip</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2 text-sm">
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-gray-300">YouTube Video</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-gray-300">Otomatik Oynatma</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span className="text-gray-300">HD Kalite</span>
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-gray-600">
+                      <a 
+                        href={videoData.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 text-xs break-all flex items-center space-x-1"
+                      >
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                        <span>YouTube'da Aç</span>
+                      </a>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="mt-6 flex items-center justify-between">
                   <div className="flex items-center space-x-4 text-sm text-gray-400">
@@ -603,7 +678,7 @@ function LessonContent({ courseId, moduleId }) {
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      8:30 dakika
+                      {videoData?.url ? 'Video Yüklendi' : 'Video Bekleniyor'}
                     </span>
                     <span className="flex items-center">
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -620,9 +695,25 @@ function LessonContent({ courseId, moduleId }) {
                     </span>
                   </div>
                   
-                  <button className="px-6 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105">
-                    Video Oynat
-                  </button>
+                  {videoData?.url ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="px-3 py-1 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
+                        ✓ Video Hazır
+                      </div>
+                      <a 
+                        href={videoData.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 text-sm"
+                      >
+                        YouTube'da Aç
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="px-4 py-2 bg-gray-600 text-gray-300 font-medium rounded-lg text-sm">
+                      Video URL'i Eklenmemiş
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -972,9 +1063,10 @@ function Lessons() {
   };
   
   const handleStartModule = (courseId) => {
-    // Start with the first module (variables for python, html_basics for web, intro for js)
-    const firstModules = { python: 'variables', web: 'html_basics', js: 'intro' };
-    navigate(`/lessons/${courseId}/${firstModules[courseId]}`);
+    // Start with the first module (variables for python, html_basics for web, beginning for js)
+    const firstModules = { python: 'variables', web: 'html_basics', js: 'beginning' };
+    const targetModule = firstModules[courseId];
+    navigate(`/lessons/${courseId}/${targetModule}`);
   };
   
   // If no course is selected, show course selection
@@ -1306,11 +1398,19 @@ function Lessons() {
   
   // If both course and module are selected, show lesson content
   // Validate moduleId exists; if not, redirect to first module
-  const firstModules = { python: 'variables', web: 'html_basics', js: 'intro' };
+  const firstModules = { python: 'variables', web: 'html_basics', js: 'beginning' };
   const courseData = t(`lessonsContent.${courseId}`);
   const validModules = courseData && courseData.modules ? Object.keys(courseData.modules) : [];
+  
+  // If course data is not loaded yet, show loading or redirect
+  if (!courseData || !courseData.modules) {
+    navigate(`/lessons/${courseId}/intro`, { replace: true });
+    return null;
+  }
+  
   if (!validModules.includes(moduleId)) {
-    navigate(`/lessons/${courseId}/${firstModules[courseId] || validModules[0] || 'intro'}`, { replace: true });
+    const redirectModule = firstModules[courseId] || validModules[0] || 'intro';
+    navigate(`/lessons/${courseId}/${redirectModule}`, { replace: true });
     return null;
   }
 
