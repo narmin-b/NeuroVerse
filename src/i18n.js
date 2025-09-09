@@ -531,74 +531,288 @@ const resources = {
           }
         },
         web: {
-          title: "HTML/CSS ile Web Geliştirme",
-          summary: "HTML ve CSS ile web sayfaları oluşturmayı öğrenin.",
+          title: "HTML & CSS ile Web Geliştirme",
+          summary: "HTML ve CSS ile web geliştirmenin temellerini öğrenin. HTML yapısından CSS stillerine, responsive tasarımdan erişilebilirliğe kadar kapsamlı bir öğrenme yolculuğu.",
           meta: {
-            duration: "5-6 saat",
+            duration: "8-10 saat",
             difficulty: "Başlangıç"
           },
           whatYouWillLearn: [
-            "HTML etiketleri",
-            "CSS ile stil verme",
-            "Görseller ve bağlantılar",
-            "Listeler ve tablolar",
-            "Basit formlar"
+            "HTML temelleri ve yapısı",
+            "HTML elementleri ve formlar",
+            "CSS temelleri ve seçiciler",
+            "CSS layout ve positioning",
+            "CSS Grid ve Flexbox",
+            "CSS animasyonları ve efektler",
+            "Responsive web tasarım",
+            "Web erişilebilirliği",
+            "Modern web standartları",
+            "Profesyonel web projeleri oluşturma"
           ],
           syllabus: {
             modules: [
               { title: "HTML Temelleri" },
-              { title: "Başlıklar ve Paragraflar" },
-              { title: "Listeler ve Linkler" },
-              { title: "CSS Giriş" },
-              { title: "Formlar" },
+              { title: "HTML Elementleri ve Yapı" },
+              { title: "HTML Formları ve Input Türleri" },
+              { title: "CSS Temelleri" },
+              { title: "CSS Seçiciler ve Spesifiklik" },
+              { title: "CSS Layout ve Positioning" },
+              { title: "CSS Grid ve Flexbox" },
+              { title: "CSS Animasyonları ve Efektler" },
+              { title: "Responsive Web Tasarım" },
+              { title: "Web Erişilebilirliği" },
               { title: "Web Quiz" }
             ]
           },
           modules: {
-            html_basics: { title: "HTML Temelleri", text: [
-              "HTML, web sayfalarının iskeletini oluşturan işaretleme dilidir. Etiketler (tags) ile içerik tanımlanır.",
-              "Bir HTML belgesinin temel yapısı: <!DOCTYPE html>, <html>, <head> ve <body> bölümlerinden oluşur.",
-              "Anlamlı etiketler (semantic tags) kullanmak erişilebilirlik ve SEO için önemlidir (header, main, footer)."
-            ],
-              quiz: { title: "Quiz", questions: [ { q: "En büyük başlık etiketi?", a: ["<h6>", "<h1>", "<head>"], correct: 1 } ] },
-              video: { title: "HTML Temelleri", description: "HTML yapı taşlarına giriş" }
+            html_fundamentals: { 
+              title: "HTML Temelleri", 
+              text: [
+                "HTML (HyperText Markup Language), web sayfaları oluşturmak için kullanılan standart işaretleme dilidir. Web sayfalarının yapısını ve içeriğini sağlar.",
+                "Her HTML belgesi DOCTYPE bildirimi ile başlar ve temel bir yapıya sahiptir:",
+                "```<!DOCTYPE html>\n<html>\n<head>\n    <title>Sayfa Başlığı</title>\n</head>\n<body>\n    <h1>Bu bir başlık</h1>\n    <p>Bu bir paragraf.</p>\n</body>\n</html>```",
+                "Temel HTML kavramları:",
+                "• Elementler: HTML'in yapı taşları (örn. <p>, <h1>, <div>)",
+                "• Etiketler: Elementleri tanımlayan işaretleme (<p>içerik</p>)",
+                "• Özellikler: Elementler hakkında ek bilgi (class, id, src)",
+                "• İç içe geçme: Elementler diğer elementleri içerebilir",
+                "• Kendini kapatan etiketler: Kapanış etiketi gerektirmeyen elementler (<img>, <br>)",
+                "",
+                "HTML5, daha iyi yapı için semantik elementler getirdi:",
+                "• <header> - Tanıtım içeriği",
+                "• <nav> - Navigasyon linkleri",
+                "• <main> - Ana içerik",
+                "• <section> - Tematik gruplama",
+                "• <article> - Bağımsız içerik",
+                "• <aside> - Yan içerik",
+                "• <footer> - Alt bilgi içeriği"
+              ],
+              quiz: { 
+                title: "HTML Temelleri Quiz", 
+                questions: [ 
+                  { q: "HTML ne anlama gelir?", a: ["HyperText Markup Language", "High Tech Modern Language", "Home Tool Markup Language"], correct: 0 },
+                  { q: "Ana başlık için hangi etiket kullanılır?", a: ["<h1>", "<head>", "<header>"], correct: 0 },
+                  { q: "DOCTYPE bildiriminin amacı nedir?", a: ["Sayfa başlığını tanımlar", "HTML sürümünü belirtir", "CSS stilleri ekler"], correct: 1 },
+                  { q: "Hangisi kendini kapatan etikettir?", a: ["<p>", "<img>", "<div>"], correct: 1 }
+                ] 
+              },
+              video: { title: "HTML Temelleri", description: "HTML yapısı ve temel elementlere giriş" }
             },
-            headings_paragraphs: { title: "Başlıklar ve Paragraflar", text: [
-              "Başlıklar içerik hiyerarşisini kurar: h1 en üst seviye, h2-h6 alt başlıklardır.",
-              "Paragraflar p etiketi ile tanımlanır; metin biçimlendirme strong, em, a gibi etiketlerle yapılır.",
-              "Uzun metinlerde doğru başlık yapısı, okuyucunun içeriği taramasını kolaylaştırır."
-            ],
-              quiz: { title: "Quiz", questions: [ { q: "Paragraf etiketi nedir?", a: ["<para>", "<p>", "<pg>"] , correct: 1 } ] },
-              video: { title: "Metin Yapısı", description: "Başlık ve paragraf kullanımı" }
+            html_elements: { 
+              title: "HTML Elementleri ve Yapı", 
+              text: [
+                "HTML elementleri web sayfalarının yapı taşlarıdır. Her elementin belirli bir amacı ve yapısı vardır.",
+                "Metin Elementleri:",
+                "```<h1>Ana Başlık</h1>\n<h2>Alt Başlık</h2>\n<h3>Bölüm Başlığı</h3>\n<p>Bu <strong>kalın</strong> ve <em>italik</em> metin içeren bir paragraftır.</p>\n<blockquote>Bu bir alıntıdır</blockquote>```",
+                "Listeler:",
+                "```<!-- Sırasız liste -->\n<ul>\n    <li>İlk öğe</li>\n    <li>İkinci öğe</li>\n    <li>Üçüncü öğe</li>\n</ul>\n\n<!-- Sıralı liste -->\n<ol>\n    <li>İlk adım</li>\n    <li>İkinci adım</li>\n    <li>Üçüncü adım</li>\n</ol>```",
+                "Linkler ve Görseller:",
+                "```<!-- Linkler -->\n<a href=\"https://www.example.com\">Örnek Siteyi Ziyaret Et</a>\n<a href=\"#section1\">Bölüm 1'e Git</a>\n<a href=\"mailto:contact@example.com\">E-posta Gönder</a>\n\n<!-- Görseller -->\n<img src=\"resim.jpg\" alt=\"Açıklama\" width=\"300\" height=\"200\">\n<img src=\"foto.png\" alt=\"Profil resmi\" class=\"profile-img\">```",
+                "Tablolar:",
+                "```<table>\n    <thead>\n        <tr>\n            <th>İsim</th>\n            <th>Yaş</th>\n            <th>Şehir</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td>Ahmet</td>\n            <td>25</td>\n            <td>İstanbul</td>\n        </tr>\n    </tbody>\n</table>```",
+                "HTML Özellikleri:",
+                "• class - CSS sınıf adı",
+                "• id - Benzersiz tanımlayıcı",
+                "• src - Görseller/scriptler için kaynak URL",
+                "• href - Link hedefi",
+                "• alt - Görseller için alternatif metin",
+                "• title - Araç ipucu metni",
+                "• data-* - Özel veri özellikleri"
+              ],
+              quiz: { 
+                title: "HTML Elementleri Quiz", 
+                questions: [ 
+                  { q: "Hangi etiket en büyük başlığı oluşturur?", a: ["<h6>", "<h1>", "<head>"], correct: 1 },
+                  { q: "'alt' özelliği ne işe yarar?", a: ["Hizalama ekler", "Alternatif metin sağlar", "Animasyon oluşturur"], correct: 1 },
+                  { q: "Sırasız listeler için hangi etiket kullanılır?", a: ["<ol>", "<ul>", "<li>"], correct: 1 },
+                  { q: "<div> etiketinin amacı nedir?", a: ["Link oluşturur", "Elementleri gruplar", "Görsel ekler"], correct: 1 }
+                ] 
+              },
+              video: { title: "HTML Elementleri", description: "HTML elementleri, özellikler ve yapıyı anlama" }
             },
-            lists_links: { title: "Listeler ve Linkler", text: [
-              "Listeler ul (sırasız) ve ol (sıralı) etiketleriyle oluşturulur; li ile madde eklenir.",
-              "Linkler a etiketi ile yazılır; href ile hedef URL tanımlanır, yeni sekmede açmak için target özniteliği kullanılabilir.",
-              "Gezinme menüleri listelerle semantik ve erişilebilir bir şekilde oluşturulabilir."
-            ],
-              quiz: { title: "Quiz", questions: [ { q: "Bağlantı için hangi etiket?", a: ["<a>", "<link>", "<url>"], correct: 0 } ] },
-              video: { title: "Listeler ve Linkler", description: "Menüler ve navigasyon" }
+            html_forms: { 
+              title: "HTML Formları ve Input Türleri", 
+              text: [
+                "Formlar kullanıcıların veri girişi yapmasına ve göndermesine olanak tanır. Etkileşimli web uygulamaları için gereklidir.",
+                "Temel Form Yapısı:",
+                "```<form action=\"/submit\" method=\"POST\">\n    <label for=\"name\">İsim:</label>\n    <input type=\"text\" id=\"name\" name=\"name\" required>\n    \n    <label for=\"email\">E-posta:</label>\n    <input type=\"email\" id=\"email\" name=\"email\" required>\n    \n    <button type=\"submit\">Gönder</button>\n</form>```",
+                "Input Türleri:",
+                "```<!-- Metin girişi -->\n<input type=\"text\" name=\"username\" placeholder=\"Kullanıcı adı girin\">\n\n<!-- E-posta girişi -->\n<input type=\"email\" name=\"email\" required>\n\n<!-- Şifre girişi -->\n<input type=\"password\" name=\"password\">\n\n<!-- Sayı girişi -->\n<input type=\"number\" name=\"age\" min=\"1\" max=\"100\">\n\n<!-- Tarih girişi -->\n<input type=\"date\" name=\"birthday\">\n\n<!-- Onay kutusu -->\n<input type=\"checkbox\" id=\"newsletter\" name=\"newsletter\">\n<label for=\"newsletter\">Bülteni abone ol</label>\n\n<!-- Radyo düğmeleri -->\n<input type=\"radio\" id=\"male\" name=\"gender\" value=\"male\">\n<label for=\"male\">Erkek</label>\n<input type=\"radio\" id=\"female\" name=\"gender\" value=\"female\">\n<label for=\"female\">Kadın</label>```",
+                "Select ve Textarea:",
+                "```<!-- Açılır menü -->\n<select name=\"country\">\n    <option value=\"tr\">Türkiye</option>\n    <option value=\"us\">Amerika Birleşik Devletleri</option>\n    <option value=\"uk\">Birleşik Krallık</option>\n</select>\n\n<!-- Uzun metin için textarea -->\n<textarea name=\"message\" rows=\"4\" cols=\"50\" placeholder=\"Mesajınızı girin\"></textarea>```",
+                "Form Doğrulama:",
+                "```<form>\n    <input type=\"text\" required placeholder=\"Zorunlu alan\">\n    <input type=\"email\" required pattern=\"[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$\">\n    <input type=\"number\" min=\"18\" max=\"65\" required>\n    <input type=\"url\" placeholder=\"Web sitesi URL'si\">\n    <input type=\"tel\" pattern=\"[0-9]{3}-[0-9]{3}-[0-9]{4}\" placeholder=\"123-456-7890\">\n</form>```"
+              ],
+              quiz: { 
+                title: "HTML Formları Quiz", 
+                questions: [ 
+                  { q: "Şifreler için hangi input türü kullanılır?", a: ["text", "password", "hidden"], correct: 1 },
+                  { q: "'required' özelliği ne yapar?", a: ["Alanı isteğe bağlı yapar", "Alanı zorunlu yapar", "Stil ekler"], correct: 1 },
+                  { q: "Açılır menü oluşturan etiket hangisidir?", a: ["<input>", "<select>", "<option>"], correct: 1 },
+                  { q: "'label' etiketinin amacı nedir?", a: ["Stil ekler", "Metni input ile ilişkilendirir", "Kenarlık oluşturur"], correct: 1 }
+                ] 
+              },
+              video: { title: "HTML Formları", description: "Çeşitli input türleri ile etkileşimli formlar oluşturma" }
             },
-            css_intro: { title: "CSS Giriş", text: [
-              "CSS, HTML öğelerini seçerek görsel stil uygular. Seçiciler, özellikler ve değerlerden oluşur.",
-              "Kutu modeli (box model) margin, border, padding ve content alanlarından oluşur.",
-              "Sınıflar (class) ve kimlikler (id) ile seçiciler güçlendirilir; modern projelerde utility-first yaklaşımlar da yaygındır."
-            ],
-              quiz: { title: "Quiz", questions: [ { q: "Rengi kırmızı yapan özellik?", a: ["font", "color", "paint"], correct: 1 } ] },              video: { title: "CSS'e Giriş", description: "Seçiciler ve temel stiller" }
+            css_fundamentals: { 
+              title: "CSS Temelleri", 
+              text: [
+                "CSS (Cascading Style Sheets), HTML elementlerinin görsel görünümünü kontrol eder. İçeriği sunumdan ayırır.",
+                "CSS Sözdizimi:",
+                "```css\nseçici {\n    özellik: değer;\n    özellik: değer;\n}\n\n/* Örnek */\nh1 {\n    color: blue;\n    font-size: 24px;\n    text-align: center;\n}```",
+                "CSS Eklemenin Üç Yolu:",
+                "```<!-- 1. Satır içi CSS -->\n<h1 style=\"color: red; font-size: 30px;\">Merhaba Dünya</h1>\n\n<!-- 2. Dahili CSS -->\n<head>\n    <style>\n        h1 { color: blue; }\n        p { font-size: 16px; }\n    </style>\n</head>\n\n<!-- 3. Harici CSS -->\n<head>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n</head>```",
+                "Temel Özellikler:",
+                "```css\n/* Metin özellikleri */\np {\n    color: #333333;\n    font-family: Arial, sans-serif;\n    font-size: 16px;\n    font-weight: normal;\n    text-align: left;\n    line-height: 1.5;\n    text-decoration: none;\n}\n\n/* Arka plan özellikleri */\nbody {\n    background-color: #f0f0f0;\n    background-image: url('resim.jpg');\n    background-repeat: no-repeat;\n    background-position: center;\n}\n\n/* Kutu modeli özellikleri */\n.box {\n    width: 300px;\n    height: 200px;\n    margin: 20px;\n    padding: 15px;\n    border: 2px solid #000;\n}```"
+              ],
+              quiz: { 
+                title: "CSS Temelleri Quiz", 
+                questions: [ 
+                  { q: "CSS ne anlama gelir?", a: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style System"], correct: 0 },
+                  { q: "Metin rengini değiştiren özellik hangisidir?", a: ["font-color", "color", "text-color"], correct: 1 },
+                  { q: "Doğru CSS sözdizimi hangisidir?", a: ["seçici: özellik { değer; }", "seçici { özellik: değer; }", "özellik: değer { seçici; }"], correct: 1 },
+                  { q: "Font boyutuna göre olan birim hangisidir?", a: ["px", "em", "pt"], correct: 1 }
+                ] 
+              },
+              video: { title: "CSS Temelleri", description: "CSS sözdizimi ve temel stillendirmeye giriş" }
             },
-            forms: { title: "Formlar", text: [
-              "Formlar, kullanıcıdan veri toplamak için kullanılır; form etiketinin içinde input, select, textarea, button gibi elemanlar yer alır.",
-              "Erişilebilirlik için label etiketlerini doğru kullanmak önemlidir. Basit doğrulamalar HTML5 ile yapılabilir.",
-              "Sunucuya veri gönderimi genellikle POST metodu ile yapılır; modern uygulamalarda AJAX veya fetch tercih edilir."
-            ],
-              quiz: { title: "Quiz", questions: [ { q: "Formu gönderen etiket?", a: ["<send>", "<submit>", "<button>"], correct: 2 } ] },
-              video: { title: "Formlar", description: "Form elementleri ve doğrulama" }
+            css_selectors: { 
+              title: "CSS Seçiciler ve Spesifiklik", 
+              text: [
+                "CSS seçicileri, stillendirme için HTML elementlerini hedefler. Etkili CSS için seçicileri anlamak çok önemlidir.",
+                "Temel Seçiciler:",
+                "```css\n/* Element seçici */\np { color: blue; }\n\n/* Sınıf seçici */\n.highlight { background-color: yellow; }\n\n/* ID seçici */\n#header { font-size: 24px; }\n\n/* Evrensel seçici */\n* { margin: 0; padding: 0; }```",
+                "Özellik Seçicileri:",
+                "```css\n/* Özellik var */\n[title] { border: 1px solid red; }\n\n/* Özellik değere eşit */\n[type=\"text\"] { background-color: #f0f0f0; }\n\n/* Özellik değer içeriyor */\n[class*=\"btn\"] { padding: 10px; }```"
+              ],
+              quiz: { 
+                title: "CSS Seçiciler Quiz", 
+                questions: [ 
+                  { q: "Hangi seçici en yüksek spesifikliğe sahiptir?", a: ["class", "id", "element"], correct: 1 },
+                  { q: "'>' kombinatörü neyi seçer?", a: ["Torunlar", "Doğrudan çocuklar", "Kardeşler"], correct: 1 },
+                  { q: "Hangi sözde sınıf hover durumunu hedefler?", a: [":focus", ":hover", ":active"], correct: 1 },
+                  { q: "[class*=\"btn\"] neyi seçer?", a: ["class=\"btn\" olan elementler", "class'ında \"btn\" içeren elementler", "class'ı \"btn\" ile başlayan elementler"], correct: 1 }
+                ] 
+              },
+              video: { title: "CSS Seçiciler", description: "CSS seçicileri ve spesifiklik kurallarında uzmanlaşma" }
+            },
+            css_layout: { 
+              title: "CSS Layout ve Positioning", 
+              text: [
+                "CSS, web sayfasındaki elementlerin düzenini ve konumlandırmasını kontrol etmek için güçlü araçlar sağlar.",
+                "Display Özelliği:",
+                "```css\n/* Blok elementler */\ndiv { display: block; }\n\n/* Satır içi elementler */\nspan { display: inline; }\n\n/* Flexbox konteyner */\n.container { display: flex; }\n\n/* Grid konteyner */\n.grid { display: grid; }```",
+                "Position Özelliği:",
+                "```css\n/* Relative konumlandırma */\n.relative {\n    position: relative;\n    top: 10px;\n    left: 20px;\n}\n\n/* Absolute konumlandırma */\n.absolute {\n    position: absolute;\n    top: 50px;\n    right: 10px;\n}\n\n/* Fixed konumlandırma */\n.fixed {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n}```"
+              ],
+            quiz: {
+                title: "CSS Layout Quiz", 
+              questions: [
+                  { q: "Hangi position değeri elementi normal akıştan çıkarır?", a: ["relative", "absolute", "static"], correct: 1 },
+                  { q: "'box-sizing: border-box' ne yapar?", a: ["Kenarlık ekler", "Padding'i genişliğe dahil eder", "Margin'i kaldırır"], correct: 1 },
+                  { q: "Hangi display değeri flexbox konteyner oluşturur?", a: ["block", "flex", "grid"], correct: 1 },
+                  { q: "Hangi özellik yığın sırasını kontrol eder?", a: ["stack", "z-index", "order"], correct: 1 }
+                ] 
+              },
+              video: { title: "CSS Layout", description: "CSS konumlandırma ve düzen tekniklerini anlama" }
+            },
+            css_grid_flexbox: { 
+              title: "CSS Grid ve Flexbox", 
+              text: [
+                "CSS Grid ve Flexbox, karmaşık, responsive düzenler oluşturmak için güçlü araçlar sağlayan modern düzen sistemleridir.",
+                "Flexbox (Tek boyutlu düzenler):",
+                "```css\n.flex-container {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    gap: 20px;\n}```",
+                "CSS Grid (İki boyutlu düzenler):",
+                "```css\n.grid-container {\n    display: grid;\n    grid-template-columns: 1fr 2fr 1fr;\n    grid-template-rows: auto 1fr auto;\n    gap: 20px;\n}```"
+              ],
+              quiz: { 
+                title: "CSS Grid ve Flexbox Quiz", 
+                questions: [ 
+                  { q: "Hangi düzen sistemi tek boyutludur?", a: ["Grid", "Flexbox", "Her ikisi"], correct: 1 },
+                  { q: "Grid'de 'fr' birimi neyi temsil eder?", a: ["Sabit piksel", "Mevcut alanın kesri", "Font boyutu"], correct: 1 },
+                  { q: "Flexbox'ta ana eksen hizalamasını hangi özellik kontrol eder?", a: ["align-items", "justify-content", "flex-direction"], correct: 1 },
+                  { q: "Grid'de 'auto-fit' ne yapar?", a: ["İçeriği sığdırır", "Sığan kadar sütun oluşturur", "Sütunları eşit genişlik yapar"], correct: 1 }
+                ] 
+              },
+              video: { title: "CSS Grid ve Flexbox", description: "Responsive tasarım için modern CSS düzen sistemleri" }
+            },
+            css_animations: { 
+              title: "CSS Animasyonları ve Efektler", 
+              text: [
+                "CSS animasyonları ve efektler, web sitelerini yumuşak geçişler, dönüşümler ve keyframe animasyonları ile hayata geçirir.",
+                "Geçişler:",
+                "```css\n.button {\n    background-color: blue;\n    transition: background-color 0.3s ease;\n}\n\n.button:hover {\n    background-color: red;\n}```",
+                "Dönüşümler:",
+                "```css\n.rotate { transform: rotate(45deg); }\n.scale { transform: scale(1.5); }\n.translate { transform: translate(50px, 20px); }```",
+                "Keyframe Animasyonları:",
+                "```css\n@keyframes slideIn {\n    0% { transform: translateX(-100%); opacity: 0; }\n    100% { transform: translateX(0); opacity: 1; }\n}\n\n.slide-in { animation: slideIn 1s ease-out; }```"
+              ],
+              quiz: { 
+                title: "CSS Animasyonları Quiz", 
+                questions: [ 
+                  { q: "Hangi özellik yumuşak geçişler oluşturur?", a: ["animation", "transition", "transform"], correct: 1 },
+                  { q: "'ease-in-out' zamanlama fonksiyonu ne yapar?", a: ["Yavaş başlar, hızlı biter", "Hızlı başlar, yavaş biter", "Yavaş başlar, hızlanır, sonra yavaşlar"], correct: 2 },
+                  { q: "Hangi dönüşüm elementi hareket ettirir?", a: ["rotate()", "translate()", "scale()"], correct: 1 },
+                  { q: "'animation-iteration-count: infinite' ne yapar?", a: ["Bir kez oynatır", "Sürekli oynatır", "İki kez oynatır"], correct: 1 }
+                ] 
+              },
+              video: { title: "CSS Animasyonları", description: "CSS ile etkileyici animasyonlar ve efektler oluşturma" }
+            },
+            responsive_design: { 
+              title: "Responsive Web Tasarım", 
+              text: [
+                "Responsive web tasarım, web sitelerinin tüm cihazlarda ve ekran boyutlarında iyi çalışmasını sağlar.",
+                "Viewport Meta Etiketi:",
+                "```<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">```",
+                "Medya Sorguları:",
+                "```css\n.container { width: 100%; padding: 10px; }\n\n@media (min-width: 768px) {\n    .container { width: 750px; margin: 0 auto; }\n}```",
+                "Esnek Görseller:",
+                "```css\nimg {\n    max-width: 100%;\n    height: auto;\n}```"
+              ],
+              quiz: { 
+                title: "Responsive Tasarım Quiz", 
+                questions: [ 
+                  { q: "Mobil öncelikli yaklaşım nedir?", a: ["Masaüstü için önce tasarla", "Mobil için önce tasarla", "Tablet için önce tasarla"], correct: 1 },
+                  { q: "Hangi CSS fonksiyonu akışkan tipografi oluşturur?", a: ["fluid()", "clamp()", "responsive()"], correct: 1 },
+                  { q: "CSS Grid'de 'auto-fit' ne yapar?", a: ["İçeriği konteynere sığdırır", "Sığan kadar sütun oluşturur", "Tüm sütunları eşit genişlik yapar"], correct: 1 },
+                  { q: "Önerilen minimum dokunma hedefi boyutu nedir?", a: ["24px", "32px", "44px"], correct: 2 }
+                ] 
+              },
+              video: { title: "Responsive Tasarım", description: "Mobil öncelikli responsive web siteleri oluşturma" }
+            },
+            web_accessibility: { 
+              title: "Web Erişilebilirliği", 
+              text: [
+                "Web erişilebilirliği, web sitelerinin engelli kişiler tarafından kullanılabilir olmasını sağlar.",
+                "Semantik HTML:",
+                "```html\n<header>\n    <nav aria-label=\"Ana navigasyon\">\n        <ul>\n            <li><a href=\"#home\">Ana Sayfa</a></li>\n        </ul>\n    </nav>\n</header>\n<main>\n    <article>\n        <h1>Makale Başlığı</h1>\n        <p>Makale içeriği...</p>\n    </article>\n</main>```",
+                "ARIA:",
+                "```html\n<button aria-label=\"Dialogu kapat\">×</button>\n<input type=\"text\" aria-describedby=\"email-help\" id=\"email\">\n<div id=\"email-help\">E-posta adresinizi girin</div>```"
+              ],
+              quiz: { 
+                title: "Web Erişilebilirliği Quiz", 
+                questions: [ 
+                  { q: "ARIA ne anlama gelir?", a: ["Accessible Rich Internet Applications", "Advanced Responsive Interface Access", "Automated Reading Interface Assistant"], correct: 0 },
+                  { q: "Görseller için alternatif metin sağlayan özellik hangisidir?", a: ["title", "alt", "src"], correct: 1 },
+                  { q: "Önerilen minimum renk kontrast oranı nedir?", a: ["3:1", "4.5:1", "7:1"], correct: 1 },
+                  { q: "Ana sayfa içeriği için hangi element kullanılmalıdır?", a: ["<div>", "<main>", "<section>"], correct: 1 }
+                ] 
+              },
+              video: { title: "Web Erişilebilirliği", description: "Web sitelerini tüm kullanıcılar için erişilebilir yapma" }
             },
             quiz: {
-              title: "Quiz",
+              title: "Web Geliştirme Quiz",
               questions: [
-                { q: "Bir paragraf için hangi etiket kullanılır?", a: ["<div>", "<p>", "<span>"], correct: 1 },
-                { q: "<a> etiketi ne işe yarar?", a: ["Resim eklemek", "Bağlantı oluşturmak", "Liste yapmak"], correct: 1 }
+                { q: "Hangi HTML etiketi en büyük başlığı oluşturur?", a: ["<h6>", "<h1>", "<head>"], correct: 1 },
+                { q: "CSS ne anlama gelir?", a: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style System"], correct: 0 },
+                { q: "Hangi CSS özelliği metin rengini değiştirir?", a: ["font-color", "color", "text-color"], correct: 1 },
+                { q: "Mobil öncelikli yaklaşım nedir?", a: ["Masaüstü için önce tasarla", "Mobil için önce tasarla", "Tablet için önce tasarla"], correct: 1 },
+                { q: "Hangi düzen sistemi iki boyutludur?", a: ["Flexbox", "Grid", "Float"], correct: 1 },
+                { q: "'alt' özelliği ne yapar?", a: ["Hizalama ekler", "Alternatif metin sağlar", "Animasyon oluşturur"], correct: 1 },
+                { q: "Hangi CSS özelliği yumuşak geçişler oluşturur?", a: ["animation", "transition", "transform"], correct: 1 },
+                { q: "Semantik HTML'in amacı nedir?", a: ["Stil ekler", "Erişilebilirliği artırır", "Animasyon oluşturur"], correct: 1 },
+                { q: "Şifreler için hangi input türü kullanılır?", a: ["text", "password", "hidden"], correct: 1 },
+                { q: "'box-sizing: border-box' ne yapar?", a: ["Kenarlık ekler", "Padding'i genişliğe dahil eder", "Margin'i kaldırır"], correct: 1 }
               ]
             },
             video: { title: "Web Video", description: "HTML/CSS eğitim videosu (yer tutucu)" }
@@ -1502,7 +1716,7 @@ const resources = {
                 "• Mathematical set operations",
                 "• Finding unique elements"
               ],
-              quiz: { 
+            quiz: {
                 title: "Sets Quiz", 
                 questions: [ 
                   { q: "What happens when you add duplicate elements to a set?", a: ["Error occurs", "Duplicates are removed", "Set becomes invalid"], correct: 1 },
@@ -1639,9 +1853,9 @@ const resources = {
                 "Form Validation:",
                 "```<form>\n    <input type=\"text\" required placeholder=\"Required field\">\n    <input type=\"email\" required pattern=\"[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$\">\n    <input type=\"number\" min=\"18\" max=\"65\" required>\n    <input type=\"url\" placeholder=\"Website URL\">\n    <input type=\"tel\" pattern=\"[0-9]{3}-[0-9]{3}-[0-9]{4}\" placeholder=\"123-456-7890\">\n</form>```"
               ],
-              quiz: { 
+            quiz: {
                 title: "HTML Forms Quiz", 
-                questions: [ 
+              questions: [
                   { q: "Which input type is used for passwords?", a: ["text", "password", "hidden"], correct: 1 },
                   { q: "What does the 'required' attribute do?", a: ["Makes field optional", "Makes field mandatory", "Adds styling"], correct: 1 },
                   { q: "Which tag creates a dropdown menu?", a: ["<input>", "<select>", "<option>"], correct: 1 },
@@ -1887,9 +2101,9 @@ const resources = {
                 "",
                 "```// Your first JavaScript code\nconsole.log('Hello, World!');\n```"
               ],
-              quiz: { 
+            quiz: {
                 title: "Introduction to JavaScript Quiz", 
-                questions: [ 
+              questions: [
                   { q: "What is JavaScript primarily used for?", a: ["Web page styling", "Web page structure", "Web page interactivity"], correct: 2 },
                   { q: "Which tag is used to include JavaScript in HTML?", a: ["<js>", "<script>", "<javascript>"], correct: 1 },
                   { q: "What does console.log() do?", a: ["Shows an alert", "Displays text in console", "Creates a button"], correct: 1 },
