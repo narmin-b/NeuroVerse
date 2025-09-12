@@ -26,18 +26,18 @@ function getClassesData() {
       name: 'Computer Science 101',
       description: 'Introduction to programming concepts',
       students: [
-        { id: 'alice', name: 'Alice Johnson', email: 'alice@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', active: true },
-        { id: 'bob', name: 'Bob Smith', email: 'bob@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
-        { id: 'charlie', name: 'Charlie Brown', email: 'charlie@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/47.jpg', active: true },
-        { id: 'diana', name: 'Diana Prince', email: 'diana@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/45.jpg', active: true },
-        { id: 'edward', name: 'Edward Norton', email: 'edward@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/48.jpg', active: true },
-        { id: 'fiona', name: 'Fiona Gallagher', email: 'fiona@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/46.jpg', active: true },
-        { id: 'george', name: 'George Washington', email: 'george@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/49.jpg', active: false },
-        { id: 'hannah', name: 'Hannah Montana', email: 'hannah@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/47.jpg', active: true },
-        { id: 'ian', name: 'Ian McKellen', email: 'ian@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/50.jpg', active: false },
-        { id: 'julia', name: 'Julia Roberts', email: 'julia@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/48.jpg', active: true },
-        { id: 'kevin', name: 'Kevin Hart', email: 'kevin@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/51.jpg', active: true },
-        { id: 'lisa', name: 'Lisa Simpson', email: 'lisa@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/49.jpg', active: false }
+        { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', active: true },
+        { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
+        { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/47.jpg', active: true },
+        { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', active: true },
+        { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/48.jpg', active: true },
+        { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
+        { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/49.jpg', active: false },
+        { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/47.jpg', active: true },
+        { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/50.jpg', active: false },
+        { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/48.jpg', active: true },
+        { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/51.jpg', active: true },
+        { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/49.jpg', active: false }
       ]
     },
     {
@@ -45,18 +45,18 @@ function getClassesData() {
       name: 'Advanced Programming',
       description: 'Advanced programming techniques and algorithms',
       students: [
-        { id: 'alice', name: 'Alice Johnson', email: 'alice@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', active: true },
-        { id: 'bob', name: 'Bob Smith', email: 'bob@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
-        { id: 'charlie', name: 'Charlie Brown', email: 'charlie@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/47.jpg', active: true },
-        { id: 'diana', name: 'Diana Prince', email: 'diana@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/45.jpg', active: true },
-        { id: 'edward', name: 'Edward Norton', email: 'edward@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/48.jpg', active: true },
-        { id: 'fiona', name: 'Fiona Gallagher', email: 'fiona@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/46.jpg', active: true },
-        { id: 'george', name: 'George Washington', email: 'george@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/49.jpg', active: false },
-        { id: 'hannah', name: 'Hannah Montana', email: 'hannah@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/47.jpg', active: true },
-        { id: 'ian', name: 'Ian McKellen', email: 'ian@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/50.jpg', active: false },
-        { id: 'julia', name: 'Julia Roberts', email: 'julia@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/48.jpg', active: true },
-        { id: 'kevin', name: 'Kevin Hart', email: 'kevin@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/51.jpg', active: true },
-        { id: 'lisa', name: 'Lisa Simpson', email: 'lisa@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/49.jpg', active: false }
+        { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', active: true },
+        { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
+        { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/47.jpg', active: true },
+        { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', active: true },
+        { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/48.jpg', active: true },
+        { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
+        { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/49.jpg', active: false },
+        { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/47.jpg', active: true },
+        { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/50.jpg', active: false },
+        { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/48.jpg', active: true },
+        { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/51.jpg', active: true },
+        { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/49.jpg', active: false }
       ]
     }
   ];

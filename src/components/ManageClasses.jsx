@@ -13,38 +13,40 @@ function ManageClasses() {
         id: 'classA',
         name: 'Computer Science 101',
         description: 'Introduction to programming concepts',
+        teacherId: 'teacher1',
         students: [
-          { id: 'alice', name: 'Alice Johnson', email: 'alice@student.com', status: 'active' },
-          { id: 'bob', name: 'Bob Smith', email: 'bob@student.com', status: 'active' },
-          { id: 'charlie', name: 'Charlie Brown', email: 'charlie@student.com', status: 'active' },
-          { id: 'diana', name: 'Diana Prince', email: 'diana@student.com', status: 'active' },
-          { id: 'edward', name: 'Edward Norton', email: 'edward@student.com', status: 'active' },
-          { id: 'fiona', name: 'Fiona Gallagher', email: 'fiona@student.com', status: 'active' },
-          { id: 'george', name: 'George Washington', email: 'george@student.com', status: 'inactive' },
-          { id: 'hannah', name: 'Hannah Montana', email: 'hannah@student.com', status: 'active' },
-          { id: 'ian', name: 'Ian McKellen', email: 'ian@student.com', status: 'inactive' },
-          { id: 'julia', name: 'Julia Roberts', email: 'julia@student.com', status: 'active' },
-          { id: 'kevin', name: 'Kevin Hart', email: 'kevin@student.com', status: 'active' },
-          { id: 'lisa', name: 'Lisa Simpson', email: 'lisa@student.com', status: 'inactive' }
+          { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active' },
+          { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active' },
+          { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active' },
+          { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active' },
+          { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active' },
+          { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active' },
+          { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive' },
+          { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active' },
+          { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive' },
+          { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active' },
+          { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active' },
+          { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive' }
         ]
       },
       {
         id: 'classB',
         name: 'Advanced Programming',
         description: 'Advanced programming techniques and algorithms',
+        teacherId: 'teacher1',
         students: [
-          { id: 'alice', name: 'Alice Johnson', email: 'alice@student.com', status: 'active' },
-          { id: 'bob', name: 'Bob Smith', email: 'bob@student.com', status: 'active' },
-          { id: 'charlie', name: 'Charlie Brown', email: 'charlie@student.com', status: 'active' },
-          { id: 'diana', name: 'Diana Prince', email: 'diana@student.com', status: 'active' },
-          { id: 'edward', name: 'Edward Norton', email: 'edward@student.com', status: 'active' },
-          { id: 'fiona', name: 'Fiona Gallagher', email: 'fiona@student.com', status: 'active' },
-          { id: 'george', name: 'George Washington', email: 'george@student.com', status: 'inactive' },
-          { id: 'hannah', name: 'Hannah Montana', email: 'hannah@student.com', status: 'active' },
-          { id: 'ian', name: 'Ian McKellen', email: 'ian@student.com', status: 'inactive' },
-          { id: 'julia', name: 'Julia Roberts', email: 'julia@student.com', status: 'active' },
-          { id: 'kevin', name: 'Kevin Hart', email: 'kevin@student.com', status: 'active' },
-          { id: 'lisa', name: 'Lisa Simpson', email: 'lisa@student.com', status: 'inactive' }
+          { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active' },
+          { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active' },
+          { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active' },
+          { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active' },
+          { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active' },
+          { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active' },
+          { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive' },
+          { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active' },
+          { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive' },
+          { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active' },
+          { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active' },
+          { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive' }
         ]
       }
     ];
@@ -93,12 +95,14 @@ function ManageClasses() {
   const handleCreateClass = (e) => {
     e.preventDefault();
     const classId = 'class' + Date.now();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const newClassData = {
       id: classId,
       name: newClass.name,
       description: newClass.description,
       code: generateClassCode(),
-      students: []
+      students: [],
+      teacherId: currentUser.username
     };
     setClasses([...classes, newClassData]);
     setNewClass({ name: '', description: '' });
@@ -191,7 +195,24 @@ function ManageClasses() {
   };
 
   const getStudentAvatar = (studentId) => {
-    return `https://randomuser.me/api/portraits/${studentId.length % 2 === 0 ? 'women' : 'men'}/${(studentId.charCodeAt(0) % 50) + 1}.jpg`;
+    // Map student IDs to correct genders based on Turkish names
+    const genderMap = {
+      'alice': 'women',    // Ayşe Yılmaz (female)
+      'bob': 'men',        // Mehmet Demir (male)
+      'charlie': 'women',  // Fatma Kaya (female)
+      'diana': 'men',      // Ahmet Öztürk (male)
+      'edward': 'women',   // Zeynep Şahin (female)
+      'fiona': 'men',      // Mustafa Çelik (male)
+      'george': 'women',   // Emine Arslan (female)
+      'hannah': 'men',     // Ali Koç (male)
+      'ian': 'women',      // Hatice Güler (female)
+      'julia': 'men',      // Hüseyin Aydın (male)
+      'kevin': 'women',    // Meryem Polat (female)
+      'lisa': 'men'        // Osman Erdoğan (male)
+    };
+    
+    const gender = genderMap[studentId] || (studentId.length % 2 === 0 ? 'women' : 'men');
+    return `https://randomuser.me/api/portraits/${gender}/${(studentId.charCodeAt(0) % 50) + 1}.jpg`;
   };
 
   return (
@@ -281,8 +302,8 @@ function ManageClasses() {
                 {/* Class Code */}
                 <div className="mb-4 bg-indigo-50 border border-indigo-200 rounded-md p-3 flex items-center justify-between">
                   <div>
-                    <div className="text-xs text-indigo-700">Sınıf Kodu</div>
-                    <div className="font-mono font-semibold text-indigo-900">{cls.code || 'KOD-YOK'}</div>
+                    <div className="text-xs text-indigo-700">{t('manage.classCodeLabel')}</div>
+                    <div className="font-mono font-semibold text-indigo-900">{cls.code || t('manage.noCode')}</div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -295,7 +316,7 @@ function ManageClasses() {
                       }}
                       className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                     >
-                      Kopyala
+                      {t('manage.copy')}
                     </button>
                     <button
                       onClick={() => {
@@ -304,7 +325,7 @@ function ManageClasses() {
                       }}
                       className="text-sm px-3 py-1.5 bg-white border border-indigo-200 text-indigo-700 rounded hover:bg-indigo-50"
                     >
-                      Yenile
+                      {t('manage.refresh')}
                     </button>
                   </div>
                 </div>
@@ -312,15 +333,15 @@ function ManageClasses() {
                 {/* Pending Requests */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900">Bekleyen İstekler</h4>
+                    <h4 className="font-medium text-gray-900">{t('manage.pendingRequests')}</h4>
                     <button
                       onClick={() => setPendingRequests(JSON.parse(localStorage.getItem('classJoinRequests') || '{}'))}
                       className="text-sm text-indigo-600 hover:text-indigo-700"
-                    >Yenile</button>
+                    >{t('manage.refresh')}</button>
                   </div>
                   <div className="space-y-3">
                     {(pendingRequests[cls.id] || []).length === 0 && (
-                      <div className="text-sm text-gray-500">Bekleyen istek yok.</div>
+                      <div className="text-sm text-gray-500">{t('manage.noPendingRequests')}</div>
                     )}
                     {(pendingRequests[cls.id] || []).map((req, idx) => (
                       <div key={idx} className="p-3 bg-gray-50 rounded border border-gray-200">
@@ -353,7 +374,7 @@ function ManageClasses() {
                                 localStorage.setItem('studentClass', JSON.stringify(map));
                               }}
                               className="px-3 py-1.5 text-white bg-green-600 hover:bg-green-700 rounded text-sm"
-                            >Kabul</button>
+                            >{t('manage.approve')}</button>
                             <button
                               onClick={() => {
                                 const reason = rejectionNotes[`${cls.id}:${req.username}`] || '';
@@ -365,12 +386,12 @@ function ManageClasses() {
                                 localStorage.setItem('studentJoinStatus', JSON.stringify(st));
                               }}
                               className="px-3 py-1.5 text-white bg-red-600 hover:bg-red-700 rounded text-sm"
-                            >Reddet</button>
+                            >{t('manage.reject')}</button>
                           </div>
                         </div>
                         <div className="mt-2">
                           <input
-                            placeholder="(Opsiyonel) Reddetme nedeni"
+                            placeholder={t('manage.rejectReason')}
                             value={rejectionNotes[`${cls.id}:${req.username}`] || ''}
                             onChange={(e) => setRejectionNotes({ ...rejectionNotes, [`${cls.id}:${req.username}`]: e.target.value })}
                             className="w-full border border-gray-300 rounded px-3 py-2 text-sm"

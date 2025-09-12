@@ -36,7 +36,16 @@ const resources = {
         saveChanges: "Değişiklikleri Kaydet",
         manageStudents: "Öğrencileri Yönet",
         addNewStudent: "Yeni Öğrenci Ekle",
-        delete: "Sil"
+        delete: "Sil",
+        classCodeLabel: "Sınıf Kodu",
+        noCode: "KOD-YOK",
+        copy: "Kopyala",
+        refresh: "Yenile",
+        pendingRequests: "Bekleyen İstekler",
+        noPendingRequests: "Bekleyen istek yok.",
+        approve: "Onayla",
+        reject: "Reddet",
+        rejectReason: "(Opsiyonel) Reddetme nedeni"
       },
       reports: {
         students: "Öğrenciler",
@@ -1294,7 +1303,16 @@ const resources = {
         saveChanges: "Save Changes",
         manageStudents: "Manage Students",
         addNewStudent: "Add New Student",
-        delete: "Delete"
+        delete: "Delete",
+        classCodeLabel: "Class Code",
+        noCode: "NO-CODE",
+        copy: "Copy",
+        refresh: "Refresh",
+        pendingRequests: "Pending Requests",
+        noPendingRequests: "No pending requests.",
+        approve: "Approve",
+        reject: "Reject",
+        rejectReason: "(Optional) Rejection reason"
       },
       lessons: {
         available: "Available Lessons",

@@ -306,7 +306,148 @@ export default function Home({ user }) {
     );
   }
 
-  // Authenticated teacher or others - concise hero
+  // Authenticated teacher dashboard
+  if (role === 'teacher') {
+    return (
+      <main className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 min-h-[60vh]">
+        <section className="pt-16 pb-8 px-6 md:px-12 max-w-6xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
+              {username ? username.charAt(0).toUpperCase() : 'T'}
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-indigo-800">{t('nav.welcome', { name: username || '' })}</h1>
+              <p className="text-gray-700">{i18n.language === 'tr' ? 'Sınıflarınızı yönetin ve öğrenci ilerlemelerini takip edin.' : 'Manage your classes and track student progress.'}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick actions for teachers */}
+        <section className="px-6 md:px-12 pb-10 max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link to="/reports" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">{i18n.language === 'tr' ? 'Raporlar' : 'Reports'}</h3>
+              <p className="text-sm text-gray-600 mt-1">{i18n.language === 'tr' ? 'Öğrenci performansını görüntüle' : 'View student performance'}</p>
+            </Link>
+
+            <Link to="/manage-classes" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">{i18n.language === 'tr' ? 'Sınıfları Yönet' : 'Manage Classes'}</h3>
+              <p className="text-sm text-gray-600 mt-1">{i18n.language === 'tr' ? 'Sınıf oluştur ve öğrencileri yönet' : 'Create classes and manage students'}</p>
+            </Link>
+
+            <Link to="/profile" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">{i18n.language === 'tr' ? 'Profilim' : 'My Profile'}</h3>
+              <p className="text-sm text-gray-600 mt-1">{i18n.language === 'tr' ? 'Hesap ayarları ve istatistikler' : 'Account settings and statistics'}</p>
+            </Link>
+
+            <Link to="/contact" className="group bg-white rounded-xl p-5 shadow hover:shadow-md ring-1 ring-indigo-100 hover:ring-indigo-200 transition">
+              <div className="h-10 w-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l.8-4a8.78 8.78 0 01-.8-4c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              </div>
+              <h3 className="font-semibold text-indigo-800">{i18n.language === 'tr' ? 'Destek' : 'Support'}</h3>
+              <p className="text-sm text-gray-600 mt-1">{i18n.language === 'tr' ? 'Yardım ve iletişim' : 'Help and contact'}</p>
+            </Link>
+          </div>
+        </section>
+
+        {/* Teacher summary dashboard */}
+        <section className="px-6 md:px-12 pb-16 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Classes & Students Summary */}
+            <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-indigo-100">
+              <h4 className="font-semibold text-indigo-800 mb-4">{i18n.language === 'tr' ? 'Sınıf Özeti' : 'Class Overview'}</h4>
+              <div className="grid grid-cols-2 gap-4 text-center">
+                {(() => {
+                  const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
+                  const teacherClasses = classes.filter(c => c.teacherId === username);
+                  const totalStudents = teacherClasses.reduce((sum, cls) => sum + (cls.students?.length || 0), 0);
+                  const pendingRequests = Object.values(JSON.parse(localStorage.getItem('classJoinRequests') || '{}')).flat().filter(r => r.status === 'pending').length;
+
+                  return (
+                    <>
+                      <div>
+                        <div className="text-2xl font-bold text-indigo-700">{teacherClasses.length}</div>
+                        <div className="text-xs text-gray-600">{i18n.language === 'tr' ? 'Aktif Sınıf' : 'Active Classes'}</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-indigo-700">{totalStudents}</div>
+                        <div className="text-xs text-gray-600">{i18n.language === 'tr' ? 'Toplam Öğrenci' : 'Total Students'}</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-orange-600">{pendingRequests}</div>
+                        <div className="text-xs text-gray-600">{i18n.language === 'tr' ? 'Bekleyen İstek' : 'Pending Requests'}</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-green-600">95%</div>
+                        <div className="text-xs text-gray-600">{i18n.language === 'tr' ? 'Ortalama Başarı' : 'Avg Success'}</div>
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-indigo-100">
+              <h4 className="font-semibold text-indigo-800 mb-4">{i18n.language === 'tr' ? 'Son Aktiviteler' : 'Recent Activity'}</h4>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-2 bg-indigo-50 rounded-lg">
+                  <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{i18n.language === 'tr' ? 'Yeni öğrenci katılım isteği' : 'New student join request'}</span>
+                </div>
+                <div className="flex items-center gap-3 p-2 bg-green-50 rounded-lg">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{i18n.language === 'tr' ? 'Python dersi tamamlandı' : 'Python lesson completed'}</span>
+                </div>
+                <div className="flex items-center gap-3 p-2 bg-blue-50 rounded-lg">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{i18n.language === 'tr' ? 'Quiz sonuçları güncellendi' : 'Quiz results updated'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Stats Cards */}
+        <section className="px-6 md:px-12 pb-24 max-w-6xl mx-auto">
+          <h3 className="text-xl font-bold text-indigo-800 mb-4">{i18n.language === 'tr' ? 'Hızlı İstatistikler' : 'Quick Statistics'}</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
+              <div className="text-xs text-indigo-700 font-semibold mb-2">{i18n.language === 'tr' ? 'BU HAFTA' : 'THIS WEEK'}</div>
+              <h4 className="font-semibold text-gray-900">{i18n.language === 'tr' ? 'Aktif Öğrenciler' : 'Active Students'}</h4>
+              <p className="text-sm text-gray-600 mt-1">{i18n.language === 'tr' ? '24 öğrenci ders tamamladı' : '24 students completed lessons'}</p>
+              <div className="mt-3 text-indigo-700 font-medium">+15% {i18n.language === 'tr' ? 'artış' : 'increase'}</div>
+            </div>
+
+            <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
+              <div className="text-xs text-indigo-700 font-semibold mb-2">{i18n.language === 'tr' ? 'ORTALAMA' : 'AVERAGE'}</div>
+              <h4 className="font-semibold text-gray-900">{i18n.language === 'tr' ? 'Quiz Başarısı' : 'Quiz Success'}</h4>
+              <p className="text-sm text-gray-600 mt-1">{i18n.language === 'tr' ? 'Sınıflarınızda genel başarı oranı' : 'Overall success rate in your classes'}</p>
+              <div className="mt-3 text-green-600 font-medium">87% {i18n.language === 'tr' ? 'başarı' : 'success'}</div>
+            </div>
+
+            <div className="bg-white rounded-xl p-5 shadow ring-1 ring-indigo-100">
+              <div className="text-xs text-indigo-700 font-semibold mb-2">{i18n.language === 'tr' ? 'TOPLAM' : 'TOTAL'}</div>
+              <h4 className="font-semibold text-gray-900">{i18n.language === 'tr' ? 'Çalışma Saati' : 'Study Hours'}</h4>
+              <p className="text-sm text-gray-600 mt-1">{i18n.language === 'tr' ? 'Öğrencilerinizin toplam çalışma süresi' : 'Total study time of your students'}</p>
+              <div className="mt-3 text-indigo-700 font-medium">156h {i18n.language === 'tr' ? 'bu ay' : 'this month'}</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  // Authenticated users (fallback)
   return (
     <section className="flex flex-col items-center justify-center min-h-[60vh] bg-gradient-to-br from-indigo-50 to-white text-center p-10">
       <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-indigo-700">{t('home.heroTitle')}</h1>

@@ -110,28 +110,83 @@ export default function Profile() {
           )}
         </div>
 
-        {/* Enrollments list */}
-        <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">{t('profile.myLessons')}</h2>
-            <Link to="/lessons" className="text-indigo-700 text-sm hover:underline">{t('profile.goToLessons')} →</Link>
-          </div>
-          {data.courseSummaries.length === 0 ? (
-            <div className="text-sm text-gray-600">{t('profile.noneEnrolled')}</div>
-          ) : (
-            <div className="grid sm:grid-cols-2 gap-4">
-              {data.courseSummaries.map((c) => (
-                <div key={c.id} className="border rounded-xl p-4">
-                  <div className="font-medium text-gray-900 mb-2">{c.id.toUpperCase()}</div>
-                  <div className="w-full bg-gray-100 rounded h-2 overflow-hidden">
-                    <div className="h-2 bg-indigo-600" style={{ width: `${c.percent}%` }}></div>
-                  </div>
-                  <div className="text-sm text-gray-600 mt-2">{t('profile.percentComplete', { percent: c.percent })}</div>
-                </div>
-              ))}
+        {/* Role-specific content */}
+        {data.role === 'student' ? (
+          /* Student Enrollments list */
+          <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">{t('profile.myLessons')}</h2>
+              <Link to="/lessons" className="text-indigo-700 text-sm hover:underline">{t('profile.goToLessons')} →</Link>
             </div>
-          )}
-        </div>
+            {data.courseSummaries.length === 0 ? (
+              <div className="text-sm text-gray-600">{t('profile.noneEnrolled')}</div>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {data.courseSummaries.map((c) => (
+                  <div key={c.id} className="border rounded-xl p-4">
+                    <div className="font-medium text-gray-900 mb-2">{c.id.toUpperCase()}</div>
+                    <div className="w-full bg-gray-100 rounded h-2 overflow-hidden">
+                      <div className="h-2 bg-indigo-600" style={{ width: `${c.percent}%` }}></div>
+                    </div>
+                    <div className="text-sm text-gray-600 mt-2">{t('profile.percentComplete', { percent: c.percent })}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Teacher Classes Overview */
+          <div className="space-y-6">
+            {/* Classes Management */}
+            <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">{t('profile.myClasses')}</h2>
+                <Link to="/manage-classes" className="text-indigo-700 text-sm hover:underline">{t('profile.manageClasses')} →</Link>
+              </div>
+              {(() => {
+                const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
+                const teacherClasses = classes.filter(c => c.teacherId === data.username);
+                return teacherClasses.length === 0 ? (
+                  <div className="text-sm text-gray-600">{t('profile.noClasses')}</div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {teacherClasses.map((cls) => (
+                      <div key={cls.id} className="border rounded-xl p-4">
+                        <div className="font-medium text-gray-900 mb-2">{cls.name}</div>
+                        <div className="text-sm text-gray-600 mb-2">Code: {cls.code}</div>
+                        <div className="text-sm text-indigo-700">{cls.students?.length || 0} students</div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white rounded-2xl p-6 shadow ring-1 ring-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('profile.recentActivity')}</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-600">{t('profile.pendingRequests')}</span>
+                  <span className="text-sm font-medium text-indigo-700">
+                    {(() => {
+                      const requests = JSON.parse(localStorage.getItem('classJoinRequests') || '{}');
+                      return Object.values(requests).flat().filter(r => r.status === 'pending').length;
+                    })()}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-600">{t('profile.totalStudents')}</span>
+                  <span className="text-sm font-medium text-indigo-700">{data.teacherStats?.studentCount || 0}</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm text-gray-600">{t('profile.activeClasses')}</span>
+                  <span className="text-sm font-medium text-indigo-700">{data.teacherStats?.classCount || 0}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
