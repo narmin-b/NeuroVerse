@@ -19,12 +19,12 @@ function Auth({ onLogin }) {
   // Mock user database (in real app, this would be in a backend)
   const mockUsers = JSON.parse(localStorage.getItem('users')) || {
     students: [
-      { username: 'student1', password: 'password123', email: 'student1@neuroverse.com', role: 'student' },
-      { username: 'student2', password: 'password123', email: 'student2@neuroverse.com', role: 'student' }
+      { username: 'Ayşe Öğrenci', password: 'password123', email: 'ayse@neuroverse.com', role: 'student' },
+      { username: 'Mehmet Öğrenci', password: 'password123', email: 'mehmet@neuroverse.com', role: 'student' }
     ],
     teachers: [
-      { username: 'teacher1', password: 'password123', email: 'teacher1@neuroverse.com', role: 'teacher' },
-      { username: 'teacher2', password: 'password123', email: 'teacher2@neuroverse.com', role: 'teacher' }
+      { username: 'Ahmet Öğretmen', password: 'password123', email: 'ahmet@neuroverse.com', role: 'teacher' },
+      { username: 'Fatma Hoca', password: 'password123', email: 'fatma@neuroverse.com', role: 'teacher' }
     ]
   };
 

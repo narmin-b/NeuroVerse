@@ -8,16 +8,24 @@ function getClassesData() {
   const savedClasses = localStorage.getItem('teacherClasses');
   if (savedClasses) {
     const classes = JSON.parse(savedClasses);
+    console.log('Using localStorage data:', classes); // Debug log
+    
+    // For now, show all classes (remove teacher filtering to fix the issue)
+    // TODO: Implement proper teacher filtering when user management is stable
+    let teacherClasses = classes;
+    console.log('Showing all classes:', teacherClasses);
+    
     // Transform the data to match Reports format (add avatars and active status)
-    return classes.map(cls => ({
+    return teacherClasses.map(cls => ({
       ...cls,
       students: cls.students.map(student => ({
         ...student,
-        avatar: `https://randomuser.me/api/portraits/${student.id.length % 2 === 0 ? 'women' : 'men'}/${(student.id.charCodeAt(0) % 50) + 1}.jpg`,
+        avatar: `https://randomuser.me/api/portraits/${student.gender === 'female' ? 'women' : 'men'}/${(student.id.charCodeAt(0) % 50) + 1}.jpg`,
         active: student.status === 'active'
       }))
     }));
   }
+  console.log('Using fallback data'); // Debug log
   
   // Fallback to default data if no classes exist
   return [
@@ -25,39 +33,47 @@ function getClassesData() {
       id: 'classA',
       name: 'Computer Science 101',
       description: 'Introduction to programming concepts',
+      teacherId: 'teacher1',
       students: [
-        { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', active: true },
-        { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
-        { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/47.jpg', active: true },
-        { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', active: true },
-        { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/48.jpg', active: true },
-        { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
-        { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/49.jpg', active: false },
-        { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/47.jpg', active: true },
-        { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/50.jpg', active: false },
-        { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/48.jpg', active: true },
-        { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/51.jpg', active: true },
-        { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/49.jpg', active: false }
-      ]
+        { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive', gender: 'female', active: false },
+        { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive', gender: 'female', active: false },
+        { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive', gender: 'male', active: false }
+      ].map(student => ({
+        ...student,
+        avatar: `https://randomuser.me/api/portraits/${student.gender === 'female' ? 'women' : 'men'}/${(student.id.charCodeAt(0) % 50) + 1}.jpg`
+      }))
     },
     {
       id: 'classB',
       name: 'Advanced Programming',
       description: 'Advanced programming techniques and algorithms',
+      teacherId: 'teacher1',
       students: [
-        { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', active: true },
-        { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
-        { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/47.jpg', active: true },
-        { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', active: true },
-        { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/48.jpg', active: true },
-        { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/46.jpg', active: true },
-        { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/49.jpg', active: false },
-        { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/47.jpg', active: true },
-        { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/women/50.jpg', active: false },
-        { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/men/48.jpg', active: true },
-        { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active', avatar: 'https://randomuser.me/api/portraits/women/51.jpg', active: true },
-        { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive', avatar: 'https://randomuser.me/api/portraits/men/49.jpg', active: false }
-      ]
+        { id: 'alice', name: 'Ayşe Yılmaz', email: 'ayse@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'bob', name: 'Mehmet Demir', email: 'mehmet@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'charlie', name: 'Fatma Kaya', email: 'fatma@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'diana', name: 'Ahmet Öztürk', email: 'ahmet@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'edward', name: 'Zeynep Şahin', email: 'zeynep@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'fiona', name: 'Mustafa Çelik', email: 'mustafa@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'george', name: 'Emine Arslan', email: 'emine@student.com', status: 'inactive', gender: 'female', active: false },
+        { id: 'hannah', name: 'Ali Koç', email: 'ali@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'ian', name: 'Hatice Güler', email: 'hatice@student.com', status: 'inactive', gender: 'female', active: false },
+        { id: 'julia', name: 'Hüseyin Aydın', email: 'huseyin@student.com', status: 'active', gender: 'male', active: true },
+        { id: 'kevin', name: 'Meryem Polat', email: 'meryem@student.com', status: 'active', gender: 'female', active: true },
+        { id: 'lisa', name: 'Osman Erdoğan', email: 'osman@student.com', status: 'inactive', gender: 'male', active: false }
+      ].map(student => ({
+        ...student,
+        avatar: `https://randomuser.me/api/portraits/${student.gender === 'female' ? 'women' : 'men'}/${(student.id.charCodeAt(0) % 50) + 1}.jpg`
+      }))
     }
   ];
 }

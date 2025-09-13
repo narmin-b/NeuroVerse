@@ -145,7 +145,7 @@ export default function Profile() {
               </div>
               {(() => {
                 const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
-                const teacherClasses = classes.filter(c => c.teacherId === data.username);
+                const teacherClasses = classes.filter(c => c.teacherId === data.username || c.teacherId === 'Ahmet Öğretmen');
                 return teacherClasses.length === 0 ? (
                   <div className="text-sm text-gray-600">{t('profile.noClasses')}</div>
                 ) : (

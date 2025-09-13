@@ -226,8 +226,8 @@ const resources = {
         usernameExists: "Kullanıcı adı zaten mevcut",
         requireClassCode: "Geçerli bir sınıf kodu giriniz",
         demoCredentialsTitle: "Demo Giriş Bilgileri:",
-        studentsDemo: "Öğrenciler: student1/password123, student2/password123",
-        teachersDemo: "Öğretmenler: teacher1/password123, teacher2/password123"
+        studentsDemo: "Öğrenciler: Ayşe Öğrenci/password123, Mehmet Öğrenci/password123",
+        teachersDemo: "Öğretmenler: Ahmet Öğretmen/password123, Fatma Hoca/password123"
       },
 
       contact: {
@@ -1474,8 +1474,8 @@ const resources = {
         usernameExists: "Username already exists",
         requireClassCode: "Please enter a valid class code",
         demoCredentialsTitle: "Demo Credentials:",
-        studentsDemo: "Students: student1/password123, student2/password123",
-        teachersDemo: "Teachers: teacher1/password123, teacher2/password123"
+        studentsDemo: "Students: Ayşe Öğrenci/password123, Mehmet Öğrenci/password123",
+        teachersDemo: "Teachers: Ahmet Öğretmen/password123, Fatma Hoca/password123"
       },
 
       contact: {

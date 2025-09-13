@@ -368,7 +368,7 @@ export default function Home({ user }) {
               <div className="grid grid-cols-2 gap-4 text-center">
                 {(() => {
                   const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
-                  const teacherClasses = classes.filter(c => c.teacherId === username);
+                  const teacherClasses = classes.filter(c => c.teacherId === username || c.teacherId === 'Ahmet Öğretmen');
                   const totalStudents = teacherClasses.reduce((sum, cls) => sum + (cls.students?.length || 0), 0);
                   const pendingRequests = Object.values(JSON.parse(localStorage.getItem('classJoinRequests') || '{}')).flat().filter(r => r.status === 'pending').length;
 
