@@ -1,32 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import api from '../services/api.js';
 
 function Auth({ onLogin }) {
   const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
-  const [role, setRole] = useState('student');
   const [formData, setFormData] = useState({
     username: '',
     password: '',
     confirmPassword: '',
     email: '',
+    firstName: '',
+    lastName: '',
+    role: 'student',
     classCode: ''
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
-  // Mock user database (in real app, this would be in a backend)
-  const mockUsers = JSON.parse(localStorage.getItem('users')) || {
-    students: [
-      { username: 'Ayşe Öğrenci', password: 'password123', email: 'ayse@neuroverse.com', role: 'student' },
-      { username: 'Mehmet Öğrenci', password: 'password123', email: 'mehmet@neuroverse.com', role: 'student' }
-    ],
-    teachers: [
-      { username: 'Ahmet Öğretmen', password: 'password123', email: 'ahmet@neuroverse.com', role: 'teacher' },
-      { username: 'Fatma Hoca', password: 'password123', email: 'fatma@neuroverse.com', role: 'teacher' }
-    ]
-  };
 
   const handleInputChange = (e) => {
     setFormData({
@@ -35,7 +26,7 @@ function Auth({ onLogin }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -44,66 +35,76 @@ function Auth({ onLogin }) {
       return;
     }
 
-    if (isLogin) {
-      // Login logic
-      const users = role === 'student' ? mockUsers.students : mockUsers.teachers;
-      const user = users.find(u => u.username === formData.username && u.password === formData.password);
-      
-      if (user) {
-        const session = { ...user, isAuthenticated: true };
-        localStorage.setItem('currentUser', JSON.stringify(session));
-        onLogin(session);
-        navigate(role === 'student' ? '/lessons' : '/reports');
+    try {
+      if (isLogin) {
+        const { token, user } = await api.login(formData.username, formData.password);
+        console.log('Auth component received:', { token: token ? 'present' : 'missing', user });
+        if (token && user) {
+          const session = { ...user, isAuthenticated: true };
+          console.log('Final session object:', session);
+          localStorage.setItem('currentUser', JSON.stringify(session));
+          onLogin(session);
+          navigate(user.role === 'student' ? '/lessons' : '/reports');
+        } else {
+          setError(t('auth.invalidCredentials'));
+        }
       } else {
-        setError(t('auth.invalidCredentials'));
+        const { token, user } = await api.register({
+          username: formData.username,
+          password: formData.password,
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          role: formData.role,
+          classCode: formData.role === 'student' ? formData.classCode : null
+        });
+        if (user) {
+          const session = { ...user, isAuthenticated: true };
+          localStorage.setItem('currentUser', JSON.stringify(session));
+          onLogin(session);
+          navigate(user.role === 'student' ? '/lessons' : '/reports');
+        }
       }
-    } else {
-      // Register logic
-      const users = role === 'student' ? mockUsers.students : mockUsers.teachers;
-      const existingUser = users.find(u => u.username === formData.username);
+    } catch (err) {
+      console.error('Auth error:', err);
       
-      if (existingUser) {
-        setError(t('auth.usernameExists'));
-        return;
-      }
-
-      // If student, require valid class code
-      if (role === 'student') {
-        const classes = JSON.parse(localStorage.getItem('teacherClasses') || '[]');
-        const cls = classes.find(c => (c.code || '').toUpperCase() === (formData.classCode || '').toUpperCase());
-        if (!cls) {
-          setError(t('auth.requireClassCode'));
-          return;
+      let msg = t('auth.invalidCredentials');
+      
+      // Handle different error formats
+      if (err?.data?.detail) {
+        if (Array.isArray(err.data.detail)) {
+          // Handle validation errors array
+          msg = err.data.detail.map(error => {
+            if (typeof error === 'string') return error;
+            if (typeof error === 'object' && error !== null) {
+              return error.msg || error.message || error.detail || 'Validation error';
+            }
+            return 'Validation error';
+          }).join(', ');
+        } else if (typeof err.data.detail === 'string') {
+          msg = err.data.detail;
+        } else if (typeof err.data.detail === 'object' && err.data.detail !== null) {
+          msg = JSON.stringify(err.data.detail);
         }
-        // Create a pending join request instead of immediate enrollment
-        const allReq = JSON.parse(localStorage.getItem('classJoinRequests') || '{}');
-        const arr = Array.isArray(allReq[cls.id]) ? allReq[cls.id] : [];
-        if (!arr.find(r => r.username === formData.username)) {
-          arr.push({ username: formData.username, email: formData.email, ts: Date.now(), status: 'pending' });
+      } else if (err?.message) {
+        // Ensure message is a string
+        if (typeof err.message === 'string') {
+          msg = err.message;
+        } else if (typeof err.message === 'object') {
+          msg = JSON.stringify(err.message);
+        } else {
+          msg = String(err.message);
         }
-        allReq[cls.id] = arr;
-        localStorage.setItem('classJoinRequests', JSON.stringify(allReq));
-        const st = JSON.parse(localStorage.getItem('studentJoinStatus') || '{}');
-        st[formData.username] = { classId: cls.id, status: 'pending' };
-        localStorage.setItem('studentJoinStatus', JSON.stringify(st));
+      } else if (err?.toString) {
+        msg = err.toString();
       }
-
-      const newUser = {
-        username: formData.username,
-        password: formData.password,
-        email: formData.email,
-        role: role
-      };
-
-      users.push(newUser);
-      mockUsers[role === 'student' ? 'students' : 'teachers'] = users;
-      localStorage.setItem('users', JSON.stringify(mockUsers));
-
-      // Auto-login after registration
-      const session = { ...newUser, isAuthenticated: true };
-      localStorage.setItem('currentUser', JSON.stringify(session));
-      onLogin(session);
-      navigate(role === 'student' ? '/lessons' : '/reports');
+      
+      // Final safety check - ensure msg is always a string
+      if (typeof msg !== 'string') {
+        msg = String(msg);
+      }
+      
+      setError(msg);
     }
   };
 
@@ -117,34 +118,6 @@ function Auth({ onLogin }) {
 
         <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Role Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.iam')}</label>
-              <div className="flex space-x-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="student"
-                    checked={role === 'student'}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="mr-2"
-                  />
-                  <span className="text-sm">{t('auth.student')}</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="teacher"
-                    checked={role === 'teacher'}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="mr-2"
-                  />
-                  <span className="text-sm">{t('auth.teacher')}</span>
-                </label>
-              </div>
-            </div>
 
             {/* Username */}
             <div>
@@ -176,8 +149,77 @@ function Auth({ onLogin }) {
               </div>
             )}
 
-            {/* Class Code (students only, required to join) */}
-            {!isLogin && role === 'student' && (
+            {/* Role Selection (only for registration) */}
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">{t('auth.iam')}</label>
+                <div className="mt-2 space-y-2">
+                  <div className="flex items-center">
+                    <input
+                      id="role-student"
+                      name="role"
+                      type="radio"
+                      value="student"
+                      checked={formData.role === 'student'}
+                      onChange={handleInputChange}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                    />
+                    <label htmlFor="role-student" className="ml-2 block text-sm text-gray-900">
+                      {t('auth.student')}
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="role-teacher"
+                      name="role"
+                      type="radio"
+                      value="teacher"
+                      checked={formData.role === 'teacher'}
+                      onChange={handleInputChange}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                    />
+                    <label htmlFor="role-teacher" className="ml-2 block text-sm text-gray-900">
+                      {t('auth.teacher')}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* First Name (only for registration) */}
+            {!isLogin && (
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">{t('auth.firstName')}</label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  required
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+            )}
+
+            {/* Last Name (only for registration) */}
+            {!isLogin && (
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">{t('auth.lastName')}</label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  required
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+            )}
+
+            {/* Class Code (required for students only) */}
+            {!isLogin && formData.role === 'student' && (
               <div>
                 <label htmlFor="classCode" className="block text-sm font-medium text-gray-700">{t('auth.classCode')}</label>
                 <input
@@ -243,11 +285,11 @@ function Auth({ onLogin }) {
             <div className="text-center">
               <button
                 type="button"
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setError('');
-                  setFormData({ username: '', password: '', confirmPassword: '', email: '' });
-                }}
+                    onClick={() => {
+                      setIsLogin(!isLogin);
+                      setError('');
+                      setFormData({ username: '', password: '', confirmPassword: '', email: '', firstName: '', lastName: '', role: 'student', classCode: '' });
+                    }}
                 className="text-indigo-600 hover:text-indigo-500 text-sm"
               >
                 {isLogin ? t('auth.toggleToSignUp') : t('auth.toggleToSignIn')}
