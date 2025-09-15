@@ -178,6 +178,37 @@ function LessonContent({ courseId, moduleId }) {
     localStorage.setItem('nv_progress', JSON.stringify(saved));
   }, [courseId, moduleId, activeTab]);
 
+  // Force attention to drop low after 30s of opening a module
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const val = 25; // force low attention
+      setAttention(val);
+
+      // Show suggestions/popup if applicable
+      if (val < 60 && !showAttentionPopup) {
+        const suggestions = generateAttentionSuggestions(val);
+        if (suggestions.length > 0) {
+          setAttentionSuggestions(suggestions);
+          setShowAttentionPopup(true);
+        }
+      }
+
+      // Persist the forced low attention sample
+      try {
+        const store = JSON.parse(localStorage.getItem('nv_attention') || '{}');
+        const course = store[courseId] || {};
+        const mod = course[moduleId] || [];
+        mod.push({ t: Date.now(), v: val });
+        const trimmed = mod.slice(-100);
+        course[moduleId] = trimmed;
+        store[courseId] = course;
+        localStorage.setItem('nv_attention', JSON.stringify(store));
+      } catch (e) {}
+    }, 10000);
+
+    return () => clearTimeout(timeoutId);
+  }, [courseId, moduleId]);
+
   // Generate attention-based suggestions
   const generateAttentionSuggestions = (attentionLevel) => {
     const suggestions = [];
@@ -186,38 +217,38 @@ function LessonContent({ courseId, moduleId }) {
       suggestions.push({
         type: 'text',
         icon: '📖',
-        title: 'Switch to Text Mode',
-        description: 'Reading text content can help refocus your attention',
+        title: t('attentionPopup.suggestions.switchToText.title'),
+        description: t('attentionPopup.suggestions.switchToText.desc'),
         action: () => setActiveTab('text')
       });
       suggestions.push({
         type: 'quiz',
         icon: '📝',
-        title: 'Try Interactive Quiz',
-        description: 'Engage with questions to boost concentration',
+        title: t('attentionPopup.suggestions.tryQuiz.title'),
+        description: t('attentionPopup.suggestions.tryQuiz.desc'),
         action: () => setActiveTab('quiz')
       });
       suggestions.push({
         type: 'video',
         icon: '🎥',
-        title: 'Watch Video Content',
-        description: 'Visual content might help regain focus',
+        title: t('attentionPopup.suggestions.watchVideo.title'),
+        description: t('attentionPopup.suggestions.watchVideo.desc'),
         action: () => setActiveTab('video')
       });
     } else if (attentionLevel < 60) {
       suggestions.push({
         type: 'quiz',
         icon: '📝',
-        title: 'Take a Quick Quiz',
-        description: 'Interactive content can help maintain focus',
+        title: t('attentionPopup.suggestions.takeQuickQuiz.title'),
+        description: t('attentionPopup.suggestions.takeQuickQuiz.desc'),
         action: () => setActiveTab('quiz')
       });
       suggestions.push({
         type: 'break',
         icon: '⏸️',
-        title: 'Take a Short Break',
-        description: 'A brief pause might help refresh your mind',
-        action: () => alert('Consider taking a 2-3 minute break to refresh your focus!')
+        title: t('attentionPopup.suggestions.takeShortBreak.title'),
+        description: t('attentionPopup.suggestions.takeShortBreak.desc'),
+        action: () => alert(t('attentionPopup.suggestions.breakAlert'))
       });
     }
     
@@ -819,7 +850,7 @@ function LessonContent({ courseId, moduleId }) {
                   onClick={() => setShowAttentionPopup(false)}
                   className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
                 >
-                  Dismiss
+                  {t('attentionPopup.dismiss')}
                 </button>
                 <button
                   onClick={() => {
@@ -829,7 +860,7 @@ function LessonContent({ courseId, moduleId }) {
                   }}
                   className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
                 >
-                  I'm Focused Now
+                  {t('attentionPopup.focusedNow')}
                 </button>
               </div>
             </div>
